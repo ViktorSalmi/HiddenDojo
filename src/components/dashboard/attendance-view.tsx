@@ -1,0 +1,224 @@
+﻿import { useOutletContext } from "react-router-dom";
+
+import {
+  DashboardPage,
+  type DashboardOutletContext,
+} from "@/components/layout/dashboard-page";
+import { ExportLinks } from "@/components/ui/export-links";
+import { StatCards } from "@/components/ui/stat-cards";
+import {
+  calculateDashboardAttendance,
+  calculateMemberAttendance,
+  sortMembersByAttendance,
+} from "@/lib/dojo/attendance";
+import {
+  buildAttendanceCsv,
+  buildMembersCsv,
+  downloadCsv,
+  type AttendanceRow,
+  type MemberRow,
+} from "@/lib/dojo/export";
+import {
+  getAttendanceColor,
+  getAvatarColors,
+  getBeltLabel,
+  getGenderLabel,
+  getInitials,
+} from "@/lib/dojo/format";
+import { downloadSimplePdfReport } from "@/lib/dojo/pdf";
+import type { Camp, Member, TrainingSession } from "@/types";
+
+type AttendanceViewProps = {
+  camps: Camp[];
+  members: Member[];
+  sessions: TrainingSession[];
+};
+
+function buildAttendanceRows(
+  members: Member[],
+  camps: Camp[],
+  sessions: TrainingSession[],
+) {
+  return sortMembersByAttendance(members, camps, sessions).map((entry) => ({
+    beltLabel: getBeltLabel(entry.member.belt),
+    member: entry.member,
+    summary: entry.summary,
+  }));
+}
+
+function buildMemberExportRows(
+  members: Member[],
+  camps: Camp[],
+  sessions: TrainingSession[],
+): MemberRow[] {
+  return members.map((member) => {
+    const summary = calculateMemberAttendance(member, camps, sessions);
+
+    return {
+      age: member.age,
+      attendancePercent: summary.percent,
+      beltLabel: getBeltLabel(member.belt),
+      genderLabel: getGenderLabel(member.gender),
+      joinedDateLabel: member.joined_date,
+      name: member.name,
+      statusLabel: member.active ? "Aktiv" : "Inaktiv",
+    };
+  });
+}
+
+function buildAttendanceExportRows(
+  members: Member[],
+  camps: Camp[],
+  sessions: TrainingSession[],
+): AttendanceRow[] {
+  return buildAttendanceRows(members, camps, sessions).map(({ beltLabel, member, summary }) => ({
+    beltLabel,
+    campsLabel: `${summary.attendedCamps} / ${summary.totalCamps}`,
+    name: member.name,
+    percent: summary.percent,
+    sessionsLabel: `${summary.attendedSessions} / ${summary.totalSessions}`,
+  }));
+}
+
+export function AttendanceView({
+  camps,
+  members,
+  sessions,
+}: AttendanceViewProps) {
+  const rows = buildAttendanceRows(members, camps, sessions);
+  const stats = calculateDashboardAttendance(members, camps, sessions);
+
+  function exportMembersCsv() {
+    downloadCsv(
+      "medlemmar.csv",
+      buildMembersCsv(buildMemberExportRows(members, camps, sessions)),
+    );
+  }
+
+  function exportAttendanceCsv() {
+    downloadCsv(
+      "narvaro.csv",
+      buildAttendanceCsv(buildAttendanceExportRows(members, camps, sessions)),
+    );
+  }
+
+  async function exportAttendancePdf() {
+    await downloadSimplePdfReport("narvaro.pdf", {
+      columns: ["Namn", "Bälte", "Läger", "Träningar", "Närvaro"],
+      rows: rows.map(({ beltLabel, member, summary }) => [
+        member.name,
+        beltLabel,
+        `${summary.attendedCamps} / ${summary.totalCamps}`,
+        `${summary.attendedSessions} / ${summary.totalSessions}`,
+        `${summary.percent}%`,
+      ]),
+      subtitle: `${members.length} aktiva medlemmar`,
+      title: "Närvaro",
+    });
+  }
+
+  return (
+    <DashboardPage
+      title="Närvaro"
+      stats={
+        <StatCards
+          averageAttendancePercent={stats.averageAttendancePercent}
+          campCount={camps.length}
+          memberCount={members.length}
+          sessionCount={sessions.length}
+        />
+      }
+    >
+      <ExportLinks
+        csvLabel="Exportera närvaro CSV"
+        onExportCsv={exportAttendanceCsv}
+        onExportPdf={() => void exportAttendancePdf()}
+        pdfLabel="Exportera närvaro PDF"
+      />
+      <div className="mb-4">
+        <button
+          className="rounded-full border border-[color:var(--border)] bg-[var(--surface)] px-3 py-1.5 text-[12px] font-medium text-[color:var(--ink2)] transition-colors hover:border-[#bbbbbb] hover:text-[color:var(--ink)]"
+          onClick={exportMembersCsv}
+          type="button"
+        >
+          Exportera medlemslista CSV
+        </button>
+      </div>
+      <div className="dojo-scrollbar overflow-x-auto rounded-[10px] border border-[color:var(--border)] bg-[var(--surface)]">
+        <table className="min-w-[900px] w-full table-fixed border-collapse">
+          <thead className="bg-[var(--paper)]">
+            <tr className="border-b border-[color:var(--border)]">
+              <th className="w-[52px] px-5 py-3 text-left text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]" />
+              <th className="px-4 py-3 text-left text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">Namn</th>
+              <th className="px-4 py-3 text-left text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">Bälte</th>
+              <th className="px-4 py-3 text-left text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">Läger</th>
+              <th className="px-4 py-3 text-left text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">Träningar</th>
+              <th className="px-4 py-3 text-left text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">Närvaro</th>
+              <th className="px-5 py-3 text-left text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">%</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(({ beltLabel, member, summary }) => {
+              const [avatarBackground, avatarForeground] = getAvatarColors(member.id);
+              const color = getAttendanceColor(summary.percent);
+
+              return (
+                <tr
+                  key={member.id}
+                  className="border-b border-[color:var(--border)] last:border-b-0 hover:bg-[#faf9f7]"
+                >
+                  <td className="px-5 py-3">
+                    <div
+                      className="display-font flex h-[34px] w-[34px] items-center justify-center rounded-full text-[12px] font-bold"
+                      style={{ background: avatarBackground, color: avatarForeground }}
+                    >
+                      {getInitials(member.name)}
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-[13px] font-medium">{member.name}</td>
+                  <td className="px-4 py-3 text-[13px]">{beltLabel}</td>
+                  <td className="px-4 py-3 text-[13px] text-[color:var(--ink3)]">
+                    {summary.attendedCamps} / {summary.totalCamps}
+                  </td>
+                  <td className="px-4 py-3 text-[13px] text-[color:var(--ink3)]">
+                    {summary.attendedSessions} / {summary.totalSessions}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="h-[6px] w-[140px] overflow-hidden rounded-[3px] bg-[#eeeeee]">
+                      <div
+                        className="h-[6px] rounded-[3px]"
+                        style={{ background: color, width: `${summary.percent}%` }}
+                      />
+                    </div>
+                  </td>
+                  <td className="px-5 py-3">
+                    <span
+                      className="inline-block rounded-full px-2.5 py-1 text-[11px] font-semibold"
+                      style={{ background: `${color}18`, color }}
+                    >
+                      {summary.percent}%
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </DashboardPage>
+  );
+}
+
+export function AttendanceDashboardRoute() {
+  const dashboard = useOutletContext<DashboardOutletContext>();
+
+  return (
+    <AttendanceView
+      camps={dashboard.camps}
+      members={dashboard.members}
+      sessions={dashboard.sessions}
+    />
+  );
+}
+
+
