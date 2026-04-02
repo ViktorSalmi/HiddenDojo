@@ -1,21 +1,32 @@
 ﻿# Hidden Karate Dojo
 
-Tränarportal för en karateklubb byggd som en statisk `Vite + React`-app med Supabase för auth, data och Edge Functions. UI:t följer den handoffade HTML-prototypen, medan känsligare operationer ligger i Supabase.
+En tränarportal för karateklubben byggd med `Vite`, `React` och `Supabase`.
+
+## Innehåll
+
+- e-post/lösenord-login via Supabase Auth
+- medlemshantering med create, edit, soft delete och permanent delete
+- läger och tävlingar med närvarotoggling
+- träningsregistrering per datum
+- närvarovy över hela historiken
+- CSV- och PDF-export
+- auditlogg och permanent delete via Supabase Edge Functions
+
+## Teknik
+
+- frontend: `Vite + React + React Router`
+- databas och auth: `Supabase`
+- PDF-export: `pdf-lib`
+- tester: `Vitest + Testing Library`
 
 ## Krav
 
 - Node.js 20+
-- Ett Supabase-projekt
+- ett Supabase-projekt
 
-## Kom igång
+## Miljövariabler
 
-1. Installera beroenden:
-
-```bash
-npm install
-```
-
-2. Skapa `.env.local` från exemplet och fyll i värden:
+Skapa en lokal `.env.local`:
 
 ```env
 VITE_SUPABASE_URL=...
@@ -23,36 +34,67 @@ VITE_SUPABASE_ANON_KEY=...
 SUPABASE_SERVICE_ROLE_KEY=...
 ```
 
-3. Kör migrationerna i `supabase/migrations/`.
+`SUPABASE_SERVICE_ROLE_KEY` används bara av det lokala hjälpskriptet för att skapa eller uppdatera coach-användare.
 
-4. Deploya Edge Functions i `supabase/functions/`.
+## Starta projektet
 
-5. Skapa eller uppdatera en coach-användare:
+Installera beroenden:
 
 ```bash
-npm run create:coach -- --email coach@hiddenkaratedojo.se --password ditt-losenord
+npm install
 ```
 
-6. Starta utvecklingsservern:
+Starta utvecklingsservern:
 
 ```bash
 npm run dev
 ```
 
-## Verifiering
+Appen körs lokalt på:
+
+```text
+http://localhost:5173
+```
+
+## Skapa coach-användare
 
 ```bash
+npm run create:coach -- --email coach@hiddenkaratedojo.se --password ditt-losenord
+```
+
+## Supabase-delar
+
+SQL-migrationer finns i `supabase/migrations`:
+
+- `001_initial.sql`
+- `002_client_rls_and_edge_support.sql`
+- `003_fix_member_belt_encoding.sql`
+
+Edge Functions finns i `supabase/functions`:
+
+- `audit-log-write`
+- `member-delete-permanent`
+
+## Vanliga kommandon
+
+```bash
+npm run dev
 npm test
 npm run lint
 npm run build
 ```
 
-## Funktioner
+## Verifierad status
 
-- E-post/lösenord-login via Supabase
-- Medlemmar med soft delete och separat permanent radering
-- Läger med inline-toggling av deltagare
-- Träningsregistrering med datumstyrda checkcards
-- Närvarovy med sammanställd procent över all historik
-- CSV- och PDF-export för medlemslista och närvaro
-- Auditlogg och permanent delete via Supabase Edge Functions
+Följande är testat och fungerar:
+
+- login
+- skapa medlem
+- redigera medlem
+- soft delete
+- permanent delete
+- skapa läger och toggla närvaro
+- spara träningspass
+- närvarovy
+- CSV-export
+- PDF-export
