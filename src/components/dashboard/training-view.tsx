@@ -41,6 +41,7 @@ export function TrainingView({
 }: TrainingViewProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [date, setDate] = useState(getTodayValue());
+  const [notes, setNotes] = useState("");
   const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -56,13 +57,14 @@ export function TrainingView({
         await onSaveTrainingSession({
           date,
           member_ids: selectedIds,
-          notes: null,
+          notes,
         });
       } catch {
         return;
       }
 
       setSelectedIds([]);
+      setNotes("");
     } finally {
       setIsSaving(false);
     }
@@ -138,6 +140,26 @@ export function TrainingView({
           {isSaving ? "Sparar..." : "Spara träningspass"}
         </button>
       </div>
+      <div className="panel mb-5 rounded-[18px] px-5 py-4">
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <label
+            className="display-font text-[12px] font-bold uppercase tracking-[0.08em] text-[color:var(--ink3)]"
+            htmlFor="training-notes"
+          >
+            Dagens passbeskrivning
+          </label>
+          <div className="text-[12px] text-[color:var(--ink3)]">
+            Vad ni gjorde, fokus och kommentarer
+          </div>
+        </div>
+        <textarea
+          id="training-notes"
+          className="ui-input min-h-[104px] w-full resize-y rounded-[16px] px-4 py-3 text-[14px] leading-6 outline-none"
+          onChange={(event) => setNotes(event.target.value)}
+          placeholder="Till exempel: kihon med fotarbete, kata-repetition, lätt sparring och fokus på distans."
+          value={notes}
+        />
+      </div>
       <div className="mb-6 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
         {members.map((member) => {
           const active = selectedSet.has(member.id);
@@ -211,30 +233,41 @@ export function TrainingView({
               return (
                 <div
                   key={session.id}
-                  className="panel-muted flex items-center gap-3 rounded-[14px] px-[14px] py-3"
+                  className="panel-muted rounded-[14px] px-[14px] py-3"
                 >
-                  <div className="min-w-[88px] text-[12px] font-medium text-[color:var(--ink)]">
-                    {formatDateLabel(session.date)}
-                  </div>
-                  <div className="flex flex-1 flex-wrap gap-1">
-                    {names.map((name) => (
-                      <span
-                        key={`${session.id}-${name}`}
-                        className="rounded-full bg-[var(--green-pale)] px-2 py-0.5 text-[11px] font-medium text-[color:var(--green)]"
+                  <div className="flex items-start gap-3">
+                    <div className="min-w-[88px] pt-1 text-[12px] font-medium text-[color:var(--ink)]">
+                      {formatDateLabel(session.date)}
+                    </div>
+                    <div className="flex min-w-0 flex-1 flex-col gap-2">
+                      <div className="flex flex-wrap gap-1">
+                        {names.map((name) => (
+                          <span
+                            key={`${session.id}-${name}`}
+                            className="rounded-full bg-[var(--green-pale)] px-2 py-0.5 text-[11px] font-medium text-[color:var(--green)]"
+                          >
+                            {name}
+                          </span>
+                        ))}
+                      </div>
+                      {session.notes ? (
+                        <div className="rounded-[12px] bg-white/75 px-3 py-2 text-[12px] leading-6 text-[color:var(--ink2)] shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
+                          {session.notes}
+                        </div>
+                      ) : null}
+                    </div>
+                    <div className="ml-auto flex items-center gap-3 pl-2">
+                      <div className="text-[11px] text-[color:var(--ink3)]">{names.length} elever</div>
+                      <button
+                        className="flex h-8 w-8 items-center justify-center rounded-full text-[18px] leading-none text-[#cccccc] transition-colors hover:bg-[var(--red-pale)] hover:text-[color:var(--red)]"
+                        disabled={pending}
+                        onClick={() => setDeleteSessionId(session.id)}
+                        type="button"
                       >
-                        {name}
-                      </span>
-                    ))}
+                        ×
+                      </button>
+                    </div>
                   </div>
-                  <div className="text-[11px] text-[color:var(--ink3)]">{names.length} elever</div>
-                  <button
-                    className="flex h-8 w-8 items-center justify-center rounded-full text-[18px] leading-none text-[#cccccc] transition-colors hover:bg-[var(--red-pale)] hover:text-[color:var(--red)]"
-                    disabled={pending}
-                    onClick={() => setDeleteSessionId(session.id)}
-                    type="button"
-                  >
-                    ×
-                  </button>
                 </div>
               );
             })
