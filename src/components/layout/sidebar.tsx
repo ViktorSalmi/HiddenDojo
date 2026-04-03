@@ -42,6 +42,7 @@ function CalendarIcon() {
 
 const iconMap = {
   attendance: PulseIcon,
+  calendar: CalendarIcon,
   camps: HouseIcon,
   checkin: CalendarIcon,
   members: UsersIcon,

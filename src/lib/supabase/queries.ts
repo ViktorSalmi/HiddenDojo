@@ -353,11 +353,6 @@ export async function saveTrainingSession(input: TrainingSessionMutationInput) {
   }
 
   const memberIds = Array.from(new Set(input.member_ids));
-
-  if (memberIds.length === 0) {
-    throw new Error("Markera minst en elev.");
-  }
-
   const notes = input.notes?.trim() || null;
   const { data: existing, error: existingError } = await supabase
     .from("training_sessions")
@@ -394,7 +389,9 @@ export async function saveTrainingSession(input: TrainingSessionMutationInput) {
     sessionId = data.id;
   }
 
-  await replaceSessionAttendance(sessionId, memberIds);
+  if (memberIds.length > 0) {
+    await replaceSessionAttendance(sessionId, memberIds);
+  }
   await writeAuditLog({
     action: existing ? "update" : "create",
     detail: { date: input.date, member_ids: memberIds, notes },

@@ -1,5 +1,5 @@
-﻿import { useMemo, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+﻿import { useEffect, useMemo, useState } from "react";
+import { useOutletContext, useSearchParams } from "react-router-dom";
 
 import {
   DashboardPage,
@@ -7,14 +7,8 @@ import {
 } from "@/components/layout/dashboard-page";
 import { Modal } from "@/components/ui/modal";
 import { StatCards } from "@/components/ui/stat-cards";
-import { beltMeta } from "@/lib/dojo/catalog";
 import { calculateDashboardAttendance } from "@/lib/dojo/attendance";
-import {
-  formatDateLabel,
-  getAvatarColors,
-  getInitials,
-  getTodayValue,
-} from "@/lib/dojo/format";
+import { formatDateLabel, getTodayValue } from "@/lib/dojo/format";
 import type { TrainingSessionMutationInput } from "@/lib/supabase/queries";
 import type { Camp, Member, TrainingSession } from "@/types";
 
@@ -39,15 +33,27 @@ export function TrainingView({
   onSaveTrainingSession,
   sessions,
 }: TrainingViewProps) {
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [date, setDate] = useState(getTodayValue());
+  const [searchParams] = useSearchParams();
+  const requestedDate = searchParams.get("date") || getTodayValue();
+  const [date, setDate] = useState(requestedDate);
   const [notes, setNotes] = useState("");
   const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
+  const currentSession = useMemo(
+    () => sessions.find((session) => session.date === date) ?? null,
+    [date, sessions],
+  );
   const stats = calculateDashboardAttendance(members, camps, sessions);
   const pending = isMutating || isSaving || isDeleting;
+
+  useEffect(() => {
+    setNotes(currentSession?.notes ?? "");
+  }, [currentSession?.id, currentSession?.notes]);
+
+  useEffect(() => {
+    setDate(requestedDate);
+  }, [requestedDate]);
 
   async function handleSave() {
     setIsSaving(true);
@@ -56,15 +62,12 @@ export function TrainingView({
       try {
         await onSaveTrainingSession({
           date,
-          member_ids: selectedIds,
+          member_ids: [],
           notes,
         });
       } catch {
         return;
       }
-
-      setSelectedIds([]);
-      setNotes("");
     } finally {
       setIsSaving(false);
     }
@@ -92,7 +95,7 @@ export function TrainingView({
 
   return (
     <DashboardPage
-      title="Registrera träning"
+      title="Planera träning"
       stats={
         <StatCards
           averageAttendancePercent={stats.averageAttendancePercent}
@@ -107,157 +110,127 @@ export function TrainingView({
           {error}
         </div>
       ) : null}
-      <div className="panel mb-[18px] flex flex-wrap items-center justify-between gap-3 rounded-[18px] px-5 py-4">
-        <div className="flex flex-wrap items-center gap-2.5">
-          <span className="text-[13px] text-[color:var(--ink2)]">Datum:</span>
-          <input
-            className="ui-input rounded-[12px] px-3 py-[9px] text-[13px] outline-none"
-            onChange={(event) => setDate(event.target.value)}
-            type="date"
-            value={date}
-          />
-          <button
-            className="ui-button-pill rounded-full px-3 py-1.5 text-[12px] text-[color:var(--ink2)]"
-            onClick={() => setSelectedIds(members.map((member) => member.id))}
-            type="button"
-          >
-            Markera alla
-          </button>
-          <button
-            className="ui-button-pill rounded-full px-3 py-1.5 text-[12px] text-[color:var(--ink2)]"
-            onClick={() => setSelectedIds([])}
-            type="button"
-          >
-            Rensa
-          </button>
-        </div>
-        <button
-          className="rounded-[12px] bg-[linear-gradient(180deg,#36935e_0%,var(--green)_100%)] px-[18px] py-2.5 text-[13px] font-medium text-white shadow-[0_10px_22px_rgba(45,122,79,0.18)] transition-all hover:-translate-y-[1px] hover:shadow-[0_14px_26px_rgba(45,122,79,0.22)] disabled:opacity-60"
-          disabled={pending}
-          onClick={() => void handleSave()}
-          type="button"
-        >
-          {isSaving ? "Sparar..." : "Spara träningspass"}
-        </button>
-      </div>
-      <div className="panel mb-5 rounded-[18px] px-5 py-4">
-        <div className="mb-2 flex items-center justify-between gap-3">
-          <label
-            className="display-font text-[12px] font-bold uppercase tracking-[0.08em] text-[color:var(--ink3)]"
-            htmlFor="training-notes"
-          >
-            Dagens passbeskrivning
-          </label>
-          <div className="text-[12px] text-[color:var(--ink3)]">
-            Vad ni gjorde, fokus och kommentarer
+
+      <div className="panel mb-5 rounded-[18px] px-5 py-5">
+        <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <div className="display-font text-[20px] font-bold text-[color:var(--ink)]">
+              Passupplägg
+            </div>
+            <div className="mt-1 max-w-[62ch] text-[13px] leading-6 text-[color:var(--ink2)]">
+              Här planerar du själva passet i förväg. Närvaron hanteras sedan i
+              <span className="font-medium text-[color:var(--ink)]"> Checka in</span> när träningen faktiskt börjar.
+            </div>
+          </div>
+          <div className="ui-button-pill rounded-full px-3 py-1.5 text-[12px] text-[color:var(--ink2)]">
+            {currentSession
+              ? `${currentSession.attendee_ids.length} incheckade på detta pass`
+              : "Inget pass skapat ännu"}
           </div>
         </div>
-        <textarea
-          id="training-notes"
-          className="ui-input min-h-[104px] w-full resize-y rounded-[16px] px-4 py-3 text-[14px] leading-6 outline-none"
-          onChange={(event) => setNotes(event.target.value)}
-          placeholder="Till exempel: kihon med fotarbete, kata-repetition, lätt sparring och fokus på distans."
-          value={notes}
-        />
-      </div>
-      <div className="mb-6 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
-        {members.map((member) => {
-          const active = selectedSet.has(member.id);
-          const [avatarBackground, avatarForeground] = getAvatarColors(member.id);
 
-          return (
-            <button
-              key={member.id}
-              className={`flex items-center gap-2.5 rounded-[10px] border p-[10px_14px] text-left transition-colors ${
-                active
-                  ? "border-[color:var(--green)] bg-[linear-gradient(180deg,#f7fcf8_0%,var(--green-pale)_100%)] shadow-[0_10px_20px_rgba(45,122,79,0.08)]"
-                  : "panel-muted hover:border-[color:var(--border-strong)]"
-              }`}
-              onClick={() => {
-                setSelectedIds((current) =>
-                  current.includes(member.id)
-                    ? current.filter((id) => id !== member.id)
-                    : [...current, member.id],
-                );
-              }}
-              type="button"
-            >
-              <div
-                className={`flex h-[18px] w-[18px] items-center justify-center rounded-[4px] border ${
-                  active ? "border-[color:var(--green)] bg-[var(--green)]" : "border-[#cccccc]"
-                }`}
+        <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)]">
+          <div>
+            <label className="display-font text-[12px] font-bold uppercase tracking-[0.08em] text-[color:var(--ink3)]">
+              Datum
+            </label>
+            <input
+              className="ui-input mt-2 w-full rounded-[14px] px-3 py-3 text-[14px] outline-none"
+              onChange={(event) => setDate(event.target.value)}
+              type="date"
+              value={date}
+            />
+            <div className="mt-3 text-[12px] leading-6 text-[color:var(--ink3)]">
+              {currentSession
+                ? "Det finns redan ett pass på detta datum. Du redigerar nu samma pass som check-in använder."
+                : "Skapa passet i förväg, så kan du öppna check-in för samma datum senare."}
+            </div>
+          </div>
+
+          <div>
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <label
+                className="display-font text-[12px] font-bold uppercase tracking-[0.08em] text-[color:var(--ink3)]"
+                htmlFor="training-notes"
               >
-                {active ? (
-                  <svg viewBox="0 0 24 24" className="h-2.5 w-2.5 fill-none stroke-white stroke-[2.5]">
-                    <path d="m20 6-11 11-5-5" />
-                  </svg>
-                ) : null}
+                Passbeskrivning
+              </label>
+              <div className="text-[12px] text-[color:var(--ink3)]">
+                Teknik, fokus, upplägg och kommentarer
               </div>
-              <div
-                className="display-font flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold"
-                style={{ background: avatarBackground, color: avatarForeground }}
-              >
-                {getInitials(member.name)}
-              </div>
-              <div>
-                <div
-                  className={`text-[13px] font-medium ${
-                    active ? "text-[color:var(--green)]" : "text-[color:var(--ink)]"
-                  }`}
-                >
-                  {member.name}
-                </div>
-                <div className="text-[11px] text-[color:var(--ink3)]">
-                  {beltMeta[member.belt].label.replace(" bälte", "")}
-                </div>
-              </div>
-            </button>
-          );
-        })}
+            </div>
+            <textarea
+              id="training-notes"
+              className="ui-input min-h-[160px] w-full resize-y rounded-[16px] px-4 py-3 text-[14px] leading-6 outline-none"
+              onChange={(event) => setNotes(event.target.value)}
+              placeholder="Till exempel: kihon med fotarbete, kata-repetition, lätt sparring och fokus på distans."
+              value={notes}
+            />
+          </div>
+        </div>
+
+        <div className="mt-5 flex justify-end">
+          <button
+            className="rounded-[12px] bg-[linear-gradient(180deg,#36935e_0%,var(--green)_100%)] px-[18px] py-2.5 text-[13px] font-medium text-white shadow-[0_10px_22px_rgba(45,122,79,0.18)] transition-all hover:-translate-y-[1px] hover:shadow-[0_14px_26px_rgba(45,122,79,0.22)] disabled:opacity-60"
+            disabled={pending}
+            onClick={() => void handleSave()}
+            type="button"
+          >
+            {isSaving ? "Sparar..." : currentSession ? "Uppdatera passupplägg" : "Skapa träningspass"}
+          </button>
+        </div>
       </div>
+
       <div>
         <div className="display-font mb-2.5 text-[11px] font-bold uppercase tracking-[0.1em] text-[color:var(--ink3)]">
-          Loggade pass
+          Planerade och loggade pass
         </div>
         <div className="space-y-1.5">
           {sessions.length === 0 ? (
             <div className="py-2 text-[12px] text-[color:var(--ink3)]">
-              Inga pass loggade ännu
+              Inga pass registrerade ännu
             </div>
           ) : (
             sessions.map((session) => {
-              const names = session.attendee_ids
-                .map((id) => members.find((member) => member.id === id)?.name.split(" ")[0])
+              const attendeeNames = session.attendee_ids
+                .map((id) => members.find((member) => member.id === id)?.name)
                 .filter(Boolean) as string[];
 
               return (
-                <div
-                  key={session.id}
-                  className="panel-muted rounded-[14px] px-[14px] py-3"
-                >
+                <div key={session.id} className="panel-muted rounded-[14px] px-[14px] py-3">
                   <div className="flex items-start gap-3">
                     <div className="min-w-[88px] pt-1 text-[12px] font-medium text-[color:var(--ink)]">
                       {formatDateLabel(session.date)}
                     </div>
                     <div className="flex min-w-0 flex-1 flex-col gap-2">
-                      <div className="flex flex-wrap gap-1">
-                        {names.map((name) => (
-                          <span
-                            key={`${session.id}-${name}`}
-                            className="rounded-full bg-[var(--green-pale)] px-2 py-0.5 text-[11px] font-medium text-[color:var(--green)]"
-                          >
-                            {name}
-                          </span>
-                        ))}
+                      <div className="text-[12px] text-[color:var(--ink3)]">
+                        {attendeeNames.length > 0
+                          ? `${attendeeNames.length} incheckade elever`
+                          : "Ingen närvaro registrerad ännu"}
                       </div>
+                      {attendeeNames.length > 0 ? (
+                        <div className="flex flex-wrap gap-1.5">
+                          {attendeeNames.map((name) => (
+                            <span
+                              key={`${session.id}-${name}`}
+                              className="rounded-full bg-[var(--green-pale)] px-2.5 py-1 text-[11px] font-medium text-[color:var(--green)]"
+                            >
+                              {name}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
                       {session.notes ? (
                         <div className="rounded-[12px] bg-white/75 px-3 py-2 text-[12px] leading-6 text-[color:var(--ink2)] shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
                           {session.notes}
                         </div>
-                      ) : null}
+                      ) : (
+                        <div className="text-[12px] italic text-[color:var(--ink3)]">
+                          Ingen passbeskrivning ännu
+                        </div>
+                      )}
                     </div>
                     <div className="ml-auto flex items-center gap-3 pl-2">
-                      <div className="text-[11px] text-[color:var(--ink3)]">{names.length} elever</div>
                       <button
                         className="flex h-8 w-8 items-center justify-center rounded-full text-[18px] leading-none text-[#cccccc] transition-colors hover:bg-[var(--red-pale)] hover:text-[color:var(--red)]"
                         disabled={pending}
@@ -274,6 +247,7 @@ export function TrainingView({
           )}
         </div>
       </div>
+
       <Modal
         isOpen={deleteSessionId !== null}
         onClose={() => setDeleteSessionId(null)}
@@ -283,7 +257,7 @@ export function TrainingView({
           Ta bort pass
         </div>
         <p className="mb-6 text-[13px] leading-6 text-[color:var(--ink2)]">
-          Tar bort det loggade träningspasset och närvaron som hör till det.
+          Tar bort det planerade träningspasset och eventuell närvaro som hör till det.
         </p>
         <div className="flex justify-end gap-2">
           <button
@@ -323,4 +297,5 @@ export function TrainingDashboardRoute() {
     />
   );
 }
+
 

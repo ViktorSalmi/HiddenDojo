@@ -109,10 +109,19 @@ export function CheckInView({
           <div className="display-font text-[34px] font-extrabold text-[color:var(--ink)]">
             Incheckning för {formatDateLabel(dateValue)}
           </div>
-          <p className="mx-auto mt-3 max-w-[54ch] text-[15px] leading-7 text-[color:var(--ink2)]">
-            Öppna ett enkelt incheckningsläge för iPad. Om dagens träningspass inte finns
-            än skapas det automatiskt när du startar.
-          </p>
+          {todaySession?.notes ? (
+            <div className="mx-auto mt-4 max-w-[58ch] rounded-[18px] bg-white/70 px-5 py-4 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
+              <div className="section-label">Dagens passupplägg</div>
+              <p className="mt-2 text-[14px] leading-7 text-[color:var(--ink2)]">
+                {todaySession.notes}
+              </p>
+            </div>
+          ) : (
+            <p className="mx-auto mt-3 max-w-[54ch] text-[15px] leading-7 text-[color:var(--ink2)]">
+              Öppna incheckningen för dagens träning. Om inget pass är planerat ännu
+              skapas det automatiskt när du startar.
+            </p>
+          )}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <div className="ui-button-pill rounded-full px-4 py-2 text-[13px] font-medium text-[color:var(--ink2)]">
               {todaySession ? `${todaySession.attendee_ids.length} redan incheckade` : "Inget pass öppnat än"}

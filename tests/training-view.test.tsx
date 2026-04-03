@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+﻿// @vitest-environment jsdom
 
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -48,7 +48,22 @@ const sessions: TrainingSession[] = [
 ];
 
 describe("TrainingView", () => {
-  it("saves the training description in notes", async () => {
+  it("loads the existing session for the selected day into the editor", () => {
+    render(
+      <TrainingView
+        camps={camps}
+        members={members}
+        onDeleteTrainingSession={vi.fn()}
+        onSaveTrainingSession={vi.fn()}
+        sessions={sessions}
+      />,
+    );
+
+    expect(screen.getByDisplayValue("Kihon med fotarbete och lätt sparring.")).toBeTruthy();
+    expect(screen.getByText("2 incheckade på detta pass")).toBeTruthy();
+  });
+
+  it("saves the training description without requiring attendance selection", async () => {
     const onSaveTrainingSession = vi.fn().mockResolvedValue(undefined);
 
     render(
@@ -61,19 +76,18 @@ describe("TrainingView", () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: members[0].name }));
-    fireEvent.change(screen.getByLabelText("Dagens passbeskrivning"), {
+    fireEvent.change(screen.getByLabelText("Passbeskrivning"), {
       target: { value: "Kata, fokus på rytm och avslut." },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: "Spara träningspass" }));
+    fireEvent.click(screen.getByRole("button", { name: "Skapa träningspass" }));
 
     await waitFor(() => {
-      expect(onSaveTrainingSession).toHaveBeenCalledWith(
-        expect.objectContaining({
-          notes: "Kata, fokus på rytm och avslut.",
-        }),
-      );
+      expect(onSaveTrainingSession).toHaveBeenCalledWith({
+        date: expect.any(String),
+        member_ids: [],
+        notes: "Kata, fokus på rytm och avslut.",
+      });
     });
   });
 
@@ -89,5 +103,6 @@ describe("TrainingView", () => {
     );
 
     expect(screen.getByText("Kihon med fotarbete och lätt sparring.")).toBeTruthy();
+    expect(screen.getByText("2 incheckade elever")).toBeTruthy();
   });
 });

@@ -2,6 +2,7 @@
 
 import { LoginPage } from "@/components/auth/login-form";
 import { AttendanceDashboardRoute } from "@/components/dashboard/attendance-view";
+import { CalendarDashboardRoute } from "@/components/dashboard/calendar-view";
 import { CampsDashboardRoute } from "@/components/dashboard/camps-view";
 import { CheckInDashboardRoute } from "@/components/dashboard/check-in-view";
 import { MembersDashboardRoute } from "@/components/dashboard/members-view";
@@ -16,6 +17,7 @@ export const router = createBrowserRouter([
     element: <DashboardLayout />,
     children: [
       { index: true, element: <Navigate replace to="/dashboard/members" /> },
+      { path: "calendar", element: <CalendarDashboardRoute /> },
       { path: "members", element: <MembersDashboardRoute /> },
       { path: "camps", element: <CampsDashboardRoute /> },
       { path: "attendance", element: <AttendanceDashboardRoute /> },

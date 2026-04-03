@@ -61,7 +61,7 @@ export function DashboardLayout() {
   }
 
   return (
-    <div className="app-shell flex min-h-screen flex-col bg-[var(--paper)] lg:flex-row">
+    <div className="app-shell flex h-screen flex-col overflow-hidden bg-[var(--paper)] lg:flex-row">
       <Sidebar
         activeMembers={dashboard.sidebar.activeMembers}
         averageAttendance={dashboard.sidebar.averageAttendancePercent}
@@ -85,7 +85,7 @@ export function DashboardLayout() {
           </div>
         }
       />
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 overflow-hidden">
         <Outlet context={dashboard} />
       </div>
     </div>
@@ -100,17 +100,17 @@ export function DashboardPage({
   title,
 }: DashboardPageProps) {
   return (
-    <div className="flex min-h-screen flex-1 flex-col overflow-hidden">
+    <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
       <div className="ui-topbar flex h-[66px] shrink-0 items-center justify-between border-b border-[color:var(--border)] px-8">
         <h1 className="display-font text-[18px] font-extrabold text-[color:var(--ink)]">
           {title}
         </h1>
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center justify-end gap-2.5">
           {search}
           {actions}
         </div>
       </div>
-      <div className="dojo-scrollbar flex-1 overflow-y-auto px-8 py-8">
+      <div className="dojo-scrollbar min-h-0 flex-1 overflow-y-auto px-8 py-8">
         {stats}
         {children}
       </div>

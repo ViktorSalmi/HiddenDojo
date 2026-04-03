@@ -41,9 +41,10 @@ export const genderLabel: Record<Gender, string> = {
 };
 
 export const navigationItems = [
+  { href: "/dashboard/calendar", label: "Kalender", key: "calendar" },
   { href: "/dashboard/members", label: "Medlemmar", key: "members" },
   { href: "/dashboard/camps", label: "Läger & tävlingar", key: "camps" },
   { href: "/dashboard/attendance", label: "Närvaro", key: "attendance" },
-  { href: "/dashboard/training", label: "Registrera träning", key: "training" },
+  { href: "/dashboard/training", label: "Planera träning", key: "training" },
   { href: "/dashboard/check-in", label: "Checka in", key: "checkin" },
 ] as const;
