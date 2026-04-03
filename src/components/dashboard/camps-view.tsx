@@ -13,6 +13,10 @@ import { formatDateLabel } from "@/lib/dojo/format";
 import type { CampMutationInput } from "@/lib/supabase/queries";
 import type { Camp, Member, TrainingSession } from "@/types";
 
+function getCampTypeLabel(type: Camp["type"]) {
+  return type === "tävling" ? "Tävling" : "Läger";
+}
+
 type CampsViewProps = {
   camps: Camp[];
   error?: string | null;
@@ -90,7 +94,7 @@ export function CampsView({
       title="Läger & tävlingar"
       actions={
         <button
-          className="ui-button-primary rounded-[12px] px-[18px] py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
+          className="ui-button-positive rounded-[12px] px-[18px] py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
           disabled={pending}
           onClick={() => {
             setEditingCamp(null);
@@ -98,7 +102,7 @@ export function CampsView({
           }}
           type="button"
         >
-          + Nytt läger
+          + Nytt läger / tävling
         </button>
       }
       stats={
@@ -118,7 +122,7 @@ export function CampsView({
       <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
         {camps.length === 0 ? (
           <div className="panel rounded-[18px] px-6 py-12 text-center text-[13px] text-[color:var(--ink3)]">
-            Inga läger registrerade ännu
+            Inga läger eller tävlingar registrerade ännu
           </div>
         ) : (
           camps.map((camp) => (
@@ -128,6 +132,17 @@ export function CampsView({
             >
               <div className="mb-3.5 flex items-start justify-between gap-3">
                 <div>
+                  <div className="mb-1">
+                    <span
+                      className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                        camp.type === "tävling"
+                          ? "bg-[rgba(29,111,196,0.12)] text-[color:var(--blue)]"
+                          : "bg-[var(--red-pale)] text-[color:var(--red)]"
+                      }`}
+                    >
+                      {getCampTypeLabel(camp.type)}
+                    </span>
+                  </div>
                   <div className="display-font text-[15px] font-bold text-[color:var(--ink)]">
                     {camp.name}
                   </div>
@@ -227,10 +242,10 @@ export function CampsView({
         widthClassName="max-w-[360px]"
       >
         <div className="display-font mb-2 text-[16px] font-extrabold text-[color:var(--ink)]">
-          Ta bort läger
+          Ta bort läger / tävling
         </div>
         <p className="mb-6 text-[13px] leading-6 text-[color:var(--ink2)]">
-          Tar bort lägret och närvaron som hör till det.
+          Tar bort aktiviteten och närvaron som hör till den.
         </p>
         <div className="flex justify-end gap-2">
           <button

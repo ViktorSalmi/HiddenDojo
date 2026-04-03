@@ -13,16 +13,13 @@ import {
 } from "@/lib/dojo/attendance";
 import {
   buildAttendanceCsv,
-  buildMembersCsv,
   downloadCsv,
   type AttendanceRow,
-  type MemberRow,
 } from "@/lib/dojo/export";
 import {
   getAttendanceColor,
   getAvatarColors,
   getBeltLabel,
-  getGenderLabel,
   getInitials,
 } from "@/lib/dojo/format";
 import { downloadSimplePdfReport } from "@/lib/dojo/pdf";
@@ -46,26 +43,6 @@ function buildAttendanceRows(
   }));
 }
 
-function buildMemberExportRows(
-  members: Member[],
-  camps: Camp[],
-  sessions: TrainingSession[],
-): MemberRow[] {
-  return members.map((member) => {
-    const summary = calculateMemberAttendance(member, camps, sessions);
-
-    return {
-      age: member.age,
-      attendancePercent: summary.percent,
-      beltLabel: getBeltLabel(member.belt),
-      genderLabel: getGenderLabel(member.gender),
-      joinedDateLabel: member.joined_date,
-      name: member.name,
-      statusLabel: member.active ? "Aktiv" : "Inaktiv",
-    };
-  });
-}
-
 function buildAttendanceExportRows(
   members: Member[],
   camps: Camp[],
@@ -87,13 +64,6 @@ export function AttendanceView({
 }: AttendanceViewProps) {
   const rows = buildAttendanceRows(members, camps, sessions);
   const stats = calculateDashboardAttendance(members, camps, sessions);
-
-  function exportMembersCsv() {
-    downloadCsv(
-      "medlemmar.csv",
-      buildMembersCsv(buildMemberExportRows(members, camps, sessions)),
-    );
-  }
 
   function exportAttendanceCsv() {
     downloadCsv(
@@ -130,20 +100,11 @@ export function AttendanceView({
       }
     >
       <ExportLinks
-        csvLabel="Exportera närvaro CSV"
+        csvLabel="Ladda ner närvaro som CSV"
         onExportCsv={exportAttendanceCsv}
         onExportPdf={() => void exportAttendancePdf()}
-        pdfLabel="Exportera närvaro PDF"
+        pdfLabel="Ladda ner närvaro som PDF"
       />
-      <div className="mb-4">
-        <button
-          className="ui-button-pill rounded-full px-3 py-1.5 text-[12px] font-medium text-[color:var(--ink2)]"
-          onClick={exportMembersCsv}
-          type="button"
-        >
-          Exportera medlemslista CSV
-        </button>
-      </div>
       <div className="table-shell dojo-scrollbar overflow-x-auto rounded-[18px]">
         <table className="min-w-[900px] w-full table-fixed border-collapse">
           <thead className="table-head">

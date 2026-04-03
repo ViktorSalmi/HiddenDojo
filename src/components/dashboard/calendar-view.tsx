@@ -8,6 +8,10 @@ import {
 import { formatDateLabel, getTodayValue } from "@/lib/dojo/format";
 import type { Camp, TrainingSession } from "@/types";
 
+function getCampTypeLabel(type: Camp["type"]) {
+  return type === "tävling" ? "Tävling" : "Läger";
+}
+
 function startOfMonth(date: Date) {
   return new Date(date.getFullYear(), date.getMonth(), 1);
 }
@@ -75,7 +79,7 @@ export function CalendarView({ camps, sessions }: CalendarViewProps) {
                 Planering
               </div>
               <div className="mt-1 text-[13px] text-[color:var(--ink2)]">
-                Klicka på ett datum för att planera pass eller läger.
+                Klicka på ett datum för att planera pass, läger eller tävling.
               </div>
             </div>
             <div className="flex flex-wrap items-center justify-end gap-2">
@@ -108,7 +112,7 @@ export function CalendarView({ camps, sessions }: CalendarViewProps) {
               {monthDate.toLocaleDateString("sv-SE", { month: "long", year: "numeric" })}
             </div>
             <div className="text-[12px] text-[color:var(--ink3)]">
-              Träningar och läger i samma översikt
+              Träningar, läger och tävlingar i samma översikt
             </div>
           </div>
 
@@ -158,9 +162,13 @@ export function CalendarView({ camps, sessions }: CalendarViewProps) {
                     {dayCamps.slice(0, 2).map((camp) => (
                       <div
                         key={camp.id}
-                        className="rounded-[10px] bg-[var(--red-pale)] px-2 py-1 text-[11px] font-medium text-[color:var(--red)]"
+                        className={`rounded-[10px] px-2 py-1 text-[11px] font-medium ${
+                          camp.type === "tävling"
+                            ? "bg-[rgba(29,111,196,0.12)] text-[color:var(--blue)]"
+                            : "bg-[var(--red-pale)] text-[color:var(--red)]"
+                        }`}
                       >
-                        {camp.name}
+                        {getCampTypeLabel(camp.type)}
                       </div>
                     ))}
                     {dayCamps.length > 2 ? (
@@ -185,7 +193,7 @@ export function CalendarView({ camps, sessions }: CalendarViewProps) {
 
           <div className="mt-5 space-y-3">
             <button
-              className="ui-button-primary w-full rounded-[14px] px-4 py-3 text-[13px] font-medium text-white"
+              className="ui-button-positive w-full rounded-[14px] px-4 py-3 text-[13px] font-medium text-white"
               onClick={() => navigate(`/dashboard/training?date=${selectedDate}`)}
               type="button"
             >
@@ -238,7 +246,7 @@ export function CalendarView({ camps, sessions }: CalendarViewProps) {
                   {selectedSummary.camps.map((camp) => (
                     <div key={camp.id} className="rounded-[14px] bg-[var(--red-pale)] px-4 py-3">
                       <div className="text-[12px] font-semibold text-[color:var(--red)]">
-                        {camp.name}
+                        {getCampTypeLabel(camp.type)}: {camp.name}
                       </div>
                       <div className="mt-1 text-[12px] text-[color:var(--ink2)]">
                         {camp.place || "Plats inte satt ännu"}

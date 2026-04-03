@@ -203,7 +203,7 @@ export function MembersView({
       }
       actions={
         <button
-          className="ui-button-primary rounded-[12px] px-[18px] py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
+          className="ui-button-positive rounded-[12px] px-[18px] py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
           disabled={pending}
           onClick={() => {
             setEditingMember(null);
@@ -239,7 +239,9 @@ export function MembersView({
         </div>
       ) : null}
       <ExportLinks
+        csvLabel="Ladda ner medlemslista som CSV"
         onExportCsv={handleExportCsv}
+        pdfLabel="Ladda ner medlemslista som PDF"
         onExportPdf={() => void handleExportPdf()}
       />
       <div className="mb-4 flex flex-wrap gap-1.5">

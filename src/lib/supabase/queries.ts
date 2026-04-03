@@ -24,6 +24,7 @@ export type CampMutationInput = {
   date: string;
   name: string;
   place: string | null;
+  type: Camp["type"];
 };
 
 export type TrainingSessionMutationInput = {
@@ -126,7 +127,7 @@ export async function listMembers(options?: { includeInactive?: boolean }) {
 export async function listCamps() {
   const { data, error } = await supabase
     .from("camps")
-    .select("id, name, date, place, created_at, updated_at, camp_attendance(member_id)")
+    .select("id, name, type, date, place, created_at, updated_at, camp_attendance(member_id)")
     .order("date", { ascending: false });
 
   if (error) {
@@ -241,6 +242,7 @@ export async function createCamp(input: CampMutationInput) {
     date: input.date,
     name: input.name.trim(),
     place: input.place?.trim() || null,
+    type: input.type,
   };
   const attendeeIds = Array.from(new Set(input.attendee_ids));
 
@@ -273,6 +275,7 @@ export async function updateCamp(id: string, input: CampMutationInput) {
     date: input.date,
     name: input.name.trim(),
     place: input.place?.trim() || null,
+    type: input.type,
   };
   const attendeeIds = Array.from(new Set(input.attendee_ids));
 

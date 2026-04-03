@@ -2,6 +2,7 @@
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
 
 import { Sidebar } from "@/components/layout/sidebar";
+import { getTodayValue } from "@/lib/dojo/format";
 import {
   useDashboardData,
   type UseDashboardDataResult,
@@ -30,6 +31,15 @@ export function DashboardLayout() {
   const dashboard = useDashboardData({ enabled: isAuthenticated });
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [signOutError, setSignOutError] = useState<string | null>(null);
+  const today = getTodayValue();
+  const nextCamp =
+    dashboard.camps
+      .filter((camp) => camp.date >= today)
+      .sort((left, right) => left.date.localeCompare(right.date))[0] ?? null;
+  const nextSession =
+    dashboard.sessions
+      .filter((session) => session.date >= today)
+      .sort((left, right) => left.date.localeCompare(right.date))[0] ?? null;
 
   if (isLoading) {
     return <main className="shell">Laddar dashboard...</main>;
@@ -63,8 +73,6 @@ export function DashboardLayout() {
   return (
     <div className="app-shell flex h-screen flex-col overflow-hidden bg-[var(--paper)] lg:flex-row">
       <Sidebar
-        activeMembers={dashboard.sidebar.activeMembers}
-        averageAttendance={dashboard.sidebar.averageAttendancePercent}
         footer={
           <div className="space-y-3">
             <button
@@ -84,6 +92,8 @@ export function DashboardLayout() {
             <div className="text-[11px] text-[#575757]">Hidden Karate Dojo © 2026</div>
           </div>
         }
+        nextCamp={nextCamp}
+        nextSession={nextSession}
       />
       <div className="min-w-0 flex-1 overflow-hidden">
         <Outlet context={dashboard} />

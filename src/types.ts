@@ -7,6 +7,7 @@ export type Belt =
   | "blått"
   | "brunt"
   | "svart";
+export type CampType = "läger" | "tävling";
 
 export type Timestamp = string | null;
 
@@ -25,6 +26,7 @@ export type Member = {
 export type Camp = {
   id: string;
   name: string;
+  type: CampType;
   date: string;
   place: string | null;
   created_at: Timestamp;

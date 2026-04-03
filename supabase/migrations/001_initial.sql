@@ -15,6 +15,7 @@ create table members (
 create table camps (
   id uuid primary key default gen_random_uuid(),
   name text not null,
+  type text not null default 'läger' check (type in ('läger', 'tävling')),
   date date not null,
   place text,
   created_at timestamptz default now(),

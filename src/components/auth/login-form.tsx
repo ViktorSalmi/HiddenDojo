@@ -34,11 +34,11 @@ export async function attemptPasswordSignIn(
 
     return {
       error: null,
-      message: "Signed in successfully. Redirecting to the dashboard...",
+      message: "Inloggningen lyckades. Du skickas vidare till dashboarden...",
     };
   } catch {
     return {
-      error: "Unable to sign in right now. Please try again.",
+      error: "Det gick inte att logga in just nu. Försök igen strax.",
       message: null,
     };
   }
@@ -76,7 +76,7 @@ export function LoginPage() {
   }
 
   if (isLoading) {
-    return <main className="shell">Checking session...</main>;
+    return <main className="shell">Laddar session...</main>;
   }
 
   if (isAuthenticated) {
@@ -85,18 +85,39 @@ export function LoginPage() {
 
   return (
     <main className="shell">
-      <section className="hero-card">
-        <p className="eyebrow">Karate App</p>
-        <h1>Log in</h1>
-        <p className="lede">
-          Enter your email and password to access the dashboard.
-        </p>
-        <form
-          onSubmit={(event) => void handleSubmit(event)}
-          style={{ display: "grid", gap: "16px", marginTop: "28px" }}
-        >
-          <label style={{ display: "grid", gap: "8px" }}>
-            <span>Email</span>
+      <section className="hero-card auth-shell">
+        <div className="auth-panel-brand">
+          <p className="eyebrow">Hidden Karate</p>
+          <p className="mt-2 max-w-[42ch] text-[15px] leading-7 text-[color:var(--ink2)]">
+            Planera pass, checka in elever, följ närvaro och samla allt kring
+            medlemmar, träningar och läger i ett lugnt arbetsflöde.
+          </p>
+          <div className="auth-feature-grid">
+            <div className="auth-feature-card">
+              <div className="section-label">Översikt</div>
+              <div className="mt-2 text-[15px] font-medium text-[color:var(--ink)]">
+                Se dagens pass, kommande planering och aktuell närvaro direkt.
+              </div>
+            </div>
+            <div className="auth-feature-card">
+              <div className="section-label">Ipad-läge</div>
+              <div className="mt-2 text-[15px] font-medium text-[color:var(--ink)]">
+                Öppna check-in på plats och låt elever registrera sig snabbt.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="auth-panel-form">
+          <p className="eyebrow">Logga in</p>
+          <h2 className="display-font text-[34px] font-extrabold text-[color:var(--ink)]">
+            Välkommen tillbaka
+          </h2>
+          <p className="lede mt-3">
+            Använd din coach-inloggning för att öppna dashboarden.
+          </p>
+          <form className="auth-form-grid" onSubmit={(event) => void handleSubmit(event)}>
+            <label className="auth-label">
+              <span>E-post</span>
             <input
               type="email"
               name="email"
@@ -104,17 +125,12 @@ export function LoginPage() {
               required
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              style={{
-                padding: "14px 16px",
-                borderRadius: "14px",
-                border: "1px solid rgba(255, 255, 255, 0.12)",
-                background: "rgba(255, 255, 255, 0.06)",
-                color: "inherit",
-              }}
+              className="ui-input rounded-[14px] px-4 py-3.5 text-[15px] outline-none"
+              placeholder="coach@hiddenkarate.se"
             />
           </label>
-          <label style={{ display: "grid", gap: "8px" }}>
-            <span>Password</span>
+            <label className="auth-label">
+              <span>Lösenord</span>
             <input
               type="password"
               name="password"
@@ -122,37 +138,32 @@ export function LoginPage() {
               required
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              style={{
-                padding: "14px 16px",
-                borderRadius: "14px",
-                border: "1px solid rgba(255, 255, 255, 0.12)",
-                background: "rgba(255, 255, 255, 0.06)",
-                color: "inherit",
-              }}
+              className="ui-input rounded-[14px] px-4 py-3.5 text-[15px] outline-none"
+              placeholder="Skriv ditt lösenord"
             />
           </label>
           <button
             type="submit"
             disabled={isSubmitting}
-            style={{
-              padding: "14px 18px",
-              borderRadius: "14px",
-              border: 0,
-              background: "#8fb0ff",
-              color: "#09111f",
-              fontWeight: 700,
-              cursor: isSubmitting ? "progress" : "pointer",
-            }}
+            className="ui-button-primary rounded-[14px] px-5 py-3.5 text-[15px] font-semibold text-white disabled:cursor-progress disabled:opacity-60"
           >
-            {isSubmitting ? "Signing in..." : "Sign in"}
+            {isSubmitting ? "Loggar in..." : "Öppna dashboard"}
           </button>
         </form>
-        {message ? <p className="lede">{message}</p> : null}
+          <p className="auth-helper">
+            Har du inte fått inloggning ännu? Be ansvarig coach att skapa eller
+            uppdatera ditt konto i Supabase.
+          </p>
+        {message ? <p className="auth-helper text-[color:var(--green)]">{message}</p> : null}
         {error ? (
-          <p className="lede" role="alert" style={{ color: "#ffb4b4" }}>
+          <p
+            className="auth-helper rounded-[14px] border border-[color:var(--red)] bg-[var(--red-pale)] px-4 py-3 text-[color:var(--red)]"
+            role="alert"
+          >
             {error}
           </p>
         ) : null}
+        </div>
       </section>
     </main>
   );

@@ -1,4 +1,5 @@
 ﻿import { getTodayValue } from "@/lib/dojo/format";
+import * as React from "react";
 import type { CampMutationInput } from "@/lib/supabase/queries";
 import type { Camp, Member } from "@/types";
 
@@ -22,6 +23,7 @@ function readCampInput(form: HTMLFormElement): CampMutationInput {
     date: String(formData.get("date") ?? getTodayValue()),
     name: String(formData.get("name") ?? "").trim(),
     place: String(formData.get("place") ?? "").trim() || null,
+    type: (String(formData.get("type") ?? "läger") as CampMutationInput["type"]),
   };
 }
 
@@ -34,6 +36,9 @@ export function CampForm({
   pending,
 }: CampFormProps) {
   const selectedIds = new Set(camp?.attendee_ids ?? []);
+  const [selectedType, setSelectedType] = React.useState<CampMutationInput["type"]>(
+    camp?.type ?? "läger",
+  );
 
   return (
     <form
@@ -44,7 +49,39 @@ export function CampForm({
       }}
     >
       <div className="display-font mb-6 text-[22px] font-extrabold text-[color:var(--ink)]">
-        {camp ? "Redigera läger" : "Nytt läger / tävling"}
+        {camp ? "Redigera läger / tävling" : "Nytt läger / tävling"}
+      </div>
+      <div className="mb-3.5">
+        <label className="section-label mb-2 block">
+          Typ
+        </label>
+        <div className="flex flex-wrap gap-2">
+          {(["läger", "tävling"] as const).map((type) => {
+            const selected = selectedType === type;
+
+            return (
+              <label
+                key={type}
+                className={`cursor-pointer rounded-full px-3.5 py-2 text-[12px] font-medium transition-colors ${
+                  selected
+                    ? "border border-[color:var(--ink)] bg-[var(--ink)] text-white shadow-[0_10px_24px_rgba(14,14,14,0.12)]"
+                    : "ui-button-pill text-[color:var(--ink2)]"
+                }`}
+              >
+                <input
+                  className="sr-only"
+                  checked={selected}
+                  disabled={pending}
+                  name="type"
+                  onChange={() => setSelectedType(type)}
+                  type="radio"
+                  value={type}
+                />
+                {type === "läger" ? "Läger" : "Tävling"}
+              </label>
+            );
+          })}
+        </div>
       </div>
       <div className="mb-3.5">
         <label className="section-label mb-1.5 block">

@@ -134,7 +134,7 @@ export function CheckInView({
           ) : null}
           <div className="mt-8">
             <button
-              className="ui-button-primary rounded-[16px] px-7 py-4 text-[16px] font-semibold text-white disabled:opacity-60"
+              className="ui-button-positive rounded-[16px] px-7 py-4 text-[16px] font-semibold text-white disabled:opacity-60"
               disabled={pending}
               onClick={() => void handleOpen()}
               type="button"
