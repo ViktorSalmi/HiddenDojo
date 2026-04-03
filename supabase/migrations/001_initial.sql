@@ -31,6 +31,10 @@ create table camp_attendance (
 create table training_sessions (
   id uuid primary key default gen_random_uuid(),
   date date not null unique,
+  title text,
+  focus text,
+  group_label text,
+  equipment text,
   notes text,
   created_at timestamptz default now()
 );

@@ -223,11 +223,19 @@ export function CalendarView({ camps, sessions }: CalendarViewProps) {
               {selectedSummary.session ? (
                 <div className="mt-2 rounded-[14px] bg-[var(--green-pale)] px-4 py-3">
                   <div className="text-[12px] font-semibold text-[color:var(--green)]">
-                    Pass registrerat
+                    {selectedSummary.session.title?.trim() || "Pass registrerat"}
                   </div>
                   <div className="mt-1 text-[12px] text-[color:var(--ink2)]">
+                    {selectedSummary.session.focus
+                      ? `${selectedSummary.session.focus} • `
+                      : ""}
                     {selectedSummary.session.attendee_ids.length} incheckade
                   </div>
+                  {selectedSummary.session.group_label ? (
+                    <div className="mt-1 text-[12px] text-[color:var(--ink2)]">
+                      Grupp: {selectedSummary.session.group_label}
+                    </div>
+                  ) : null}
                   <div className="mt-2 text-[12px] leading-6 text-[color:var(--ink2)]">
                     {selectedSummary.session.notes || "Ingen beskrivning ännu."}
                   </div>

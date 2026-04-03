@@ -29,8 +29,12 @@ export type CampMutationInput = {
 
 export type TrainingSessionMutationInput = {
   date: string;
+  equipment: string | null;
+  focus: string | null;
+  group_label: string | null;
   member_ids: string[];
   notes: string | null;
+  title: string | null;
 };
 
 export type CheckInResult = "checked-in" | "already-checked-in";
@@ -140,7 +144,9 @@ export async function listCamps() {
 export async function listTrainingSessions() {
   const { data, error } = await supabase
     .from("training_sessions")
-    .select("id, date, notes, created_at, session_attendance(member_id)")
+    .select(
+      "id, date, title, focus, group_label, equipment, notes, created_at, session_attendance(member_id)",
+    )
     .order("date", { ascending: false });
 
   if (error) {
@@ -356,6 +362,10 @@ export async function saveTrainingSession(input: TrainingSessionMutationInput) {
   }
 
   const memberIds = Array.from(new Set(input.member_ids));
+  const title = input.title?.trim() || null;
+  const focus = input.focus?.trim() || null;
+  const groupLabel = input.group_label?.trim() || null;
+  const equipment = input.equipment?.trim() || null;
   const notes = input.notes?.trim() || null;
   const { data: existing, error: existingError } = await supabase
     .from("training_sessions")
@@ -372,7 +382,13 @@ export async function saveTrainingSession(input: TrainingSessionMutationInput) {
   if (sessionId) {
     const { error } = await supabase
       .from("training_sessions")
-      .update({ notes })
+      .update({
+        equipment,
+        focus,
+        group_label: groupLabel,
+        notes,
+        title,
+      })
       .eq("id", sessionId);
 
     if (error) {
@@ -381,7 +397,14 @@ export async function saveTrainingSession(input: TrainingSessionMutationInput) {
   } else {
     const { data, error } = await supabase
       .from("training_sessions")
-      .insert({ date: input.date, notes })
+      .insert({
+        date: input.date,
+        equipment,
+        focus,
+        group_label: groupLabel,
+        notes,
+        title,
+      })
       .select("id")
       .single();
 
@@ -397,7 +420,15 @@ export async function saveTrainingSession(input: TrainingSessionMutationInput) {
   }
   await writeAuditLog({
     action: existing ? "update" : "create",
-    detail: { date: input.date, member_ids: memberIds, notes },
+    detail: {
+      date: input.date,
+      equipment,
+      focus,
+      group_label: groupLabel,
+      member_ids: memberIds,
+      notes,
+      title,
+    },
     recordId: sessionId,
     tableName: "training_sessions",
   });
@@ -424,7 +455,14 @@ export async function ensureTrainingSession(date: string) {
 
   const { data, error } = await supabase
     .from("training_sessions")
-    .insert({ date, notes: null })
+    .insert({
+      date,
+      equipment: null,
+      focus: null,
+      group_label: null,
+      notes: null,
+      title: null,
+    })
     .select("id")
     .single();
 

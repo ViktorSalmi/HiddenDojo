@@ -37,6 +37,10 @@ export type Camp = {
 export type TrainingSession = {
   id: string;
   date: string;
+  title: string | null;
+  focus: string | null;
+  group_label: string | null;
+  equipment: string | null;
   notes: string | null;
   created_at: Timestamp;
   attendee_ids: string[];

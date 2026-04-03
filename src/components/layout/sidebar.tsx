@@ -81,9 +81,50 @@ type SidebarProps = {
   } | null;
   nextSession: {
     date: string;
-    notes: string | null;
+    title: string | null;
   } | null;
 };
+
+function UpcomingCard({
+  accentClassName,
+  emptyLabel,
+  eyebrow,
+  meta,
+  title,
+}: {
+  accentClassName: string;
+  emptyLabel: string;
+  eyebrow: string;
+  meta: string | null;
+  title: string | null;
+}) {
+  return (
+    <div className="relative overflow-hidden rounded-[15px] border border-[rgba(255,255,255,0.04)] bg-[linear-gradient(180deg,rgba(255,255,255,0.035)_0%,rgba(255,255,255,0.02)_100%)] px-3.5 py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+      <div className={`absolute inset-y-3 left-0 w-[3px] rounded-full ${accentClassName}`} />
+      <div className="pl-2">
+        <div className="mb-2 text-[10px] uppercase tracking-[0.14em] text-[#666666]">
+          {eyebrow}
+        </div>
+        {title ? (
+          <>
+            <div className="text-[13px] font-semibold text-[#fff8ef]">
+              {title}
+            </div>
+            {meta ? (
+              <div className="mt-0.5 text-[11px] leading-5 text-[#b7b1a8]">
+                {meta}
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <div className="text-[11px] leading-5 text-[#b7b1a8]">
+            {emptyLabel}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export function Sidebar({
   footer,
@@ -127,49 +168,33 @@ export function Sidebar({
           );
         })}
       </nav>
-      <div className="px-4">
-        <div className="rounded-[16px] border border-[rgba(255,255,255,0.04)] bg-[linear-gradient(180deg,rgba(255,255,255,0.035)_0%,rgba(255,255,255,0.02)_100%)] px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
-          <div className="mb-2 text-[10px] uppercase tracking-[0.14em] text-[#666666]">
-            Nästa aktivitet
-          </div>
-          {nextCamp ? (
-            <>
-              <div className="text-[14px] font-semibold text-[#fff8ef]">
-                {nextCamp.name}
-              </div>
-              <div className="mt-1 text-[12px] leading-6 text-[#b7b1a8]">
-                {nextCamp.type === "tävling" ? "Tävling" : "Läger"} •{" "}
-                {formatDateLabel(nextCamp.date)}
-                {nextCamp.place ? ` • ${nextCamp.place}` : ""}
-              </div>
-            </>
-          ) : (
-            <div className="text-[12px] leading-6 text-[#b7b1a8]">
-              Inget kommande läger eller tävling planerat ännu.
-            </div>
-          )}
-        </div>
+      <div className="space-y-4 px-4">
+        <UpcomingCard
+          accentClassName="bg-[rgba(45,122,79,0.6)]"
+          emptyLabel="Ingen kommande träning planerad ännu."
+          eyebrow="Nästa träning"
+          meta={nextSession ? formatDateLabel(nextSession.date) : null}
+          title={nextSession?.title?.trim() || (nextSession ? "Planerad träning" : null)}
+        />
+        <UpcomingCard
+          accentClassName={
+            nextCamp?.type === "tävling"
+              ? "bg-[rgba(29,111,196,0.6)]"
+              : "bg-[rgba(232,57,42,0.55)]"
+          }
+          emptyLabel="Inget kommande läger eller tävling planerat ännu."
+          eyebrow="Nästa aktivitet"
+          meta={
+            nextCamp
+              ? `${nextCamp.type === "tävling" ? "Tävling" : "Läger"} • ${formatDateLabel(nextCamp.date)}${
+                  nextCamp.place ? ` • ${nextCamp.place}` : ""
+                }`
+              : null
+          }
+          title={nextCamp?.name ?? null}
+        />
       </div>
       <div className="mt-auto border-t border-[#1e1e1e] px-4 py-5">
-        <div className="mb-4 rounded-[14px] border border-[rgba(255,255,255,0.04)] bg-[rgba(255,255,255,0.02)] px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
-          <div className="mb-3 text-[10px] uppercase tracking-[0.14em] text-[#666666]">
-            Nästa träning
-          </div>
-          {nextSession ? (
-            <div>
-              <div className="text-[14px] font-semibold text-[#fff8ef]">
-                Planerad träning
-              </div>
-              <div className="mt-1 text-[13px] font-medium text-[#d6d0c6]">
-                {formatDateLabel(nextSession.date)}
-              </div>
-            </div>
-          ) : (
-            <div className="text-[12px] leading-6 text-[#b7b1a8]">
-              Ingen kommande träning planerad ännu.
-            </div>
-          )}
-        </div>
         <div>
           <div className="mb-2 text-[10px] uppercase tracking-[0.14em] text-[#666666]">
             Konto

@@ -112,6 +112,18 @@ export function CheckInView({
           {todaySession?.notes ? (
             <div className="mx-auto mt-4 max-w-[58ch] rounded-[18px] bg-white/70 px-5 py-4 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
               <div className="section-label">Dagens passupplägg</div>
+              {todaySession.title ? (
+                <div className="mt-2 text-[18px] font-semibold text-[color:var(--ink)]">
+                  {todaySession.title}
+                </div>
+              ) : null}
+              {todaySession.focus || todaySession.group_label ? (
+                <div className="mt-1 text-[12px] leading-6 text-[color:var(--ink3)]">
+                  {todaySession.focus ? todaySession.focus : ""}
+                  {todaySession.focus && todaySession.group_label ? " • " : ""}
+                  {todaySession.group_label ? todaySession.group_label : ""}
+                </div>
+              ) : null}
               <p className="mt-2 text-[14px] leading-7 text-[color:var(--ink2)]">
                 {todaySession.notes}
               </p>
