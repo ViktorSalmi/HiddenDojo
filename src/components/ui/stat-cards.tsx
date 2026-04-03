@@ -15,12 +15,12 @@ function StatCard({
   value: string | number;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-[10px] border border-[color:var(--border)] bg-[var(--surface)] px-5 py-[18px]">
-      <div className="absolute inset-x-0 top-0 h-[3px]" style={{ background: accent }} />
-      <div className="display-font text-[30px] leading-none font-bold text-[color:var(--ink)]">
+    <div className="panel relative overflow-hidden rounded-[16px] px-5 py-5">
+      <div className="absolute inset-x-0 top-0 h-[4px]" style={{ background: accent }} />
+      <div className="display-font text-[32px] leading-none font-bold text-[color:var(--ink)]">
         {value}
       </div>
-      <div className="mt-1.5 text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">
+      <div className="mt-2 text-[11px] uppercase tracking-[0.08em] text-[color:var(--ink3)]">
         {label}
       </div>
     </div>

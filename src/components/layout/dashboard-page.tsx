@@ -61,14 +61,14 @@ export function DashboardLayout() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--paper)] lg:flex-row">
+    <div className="app-shell flex min-h-screen flex-col bg-[var(--paper)] lg:flex-row">
       <Sidebar
         activeMembers={dashboard.sidebar.activeMembers}
         averageAttendance={dashboard.sidebar.averageAttendancePercent}
         footer={
           <div className="space-y-3">
             <button
-              className="w-full rounded-[7px] border border-[#2a2a2a] px-3 py-2 text-[12px] font-medium text-white transition-colors hover:border-[color:var(--red)] hover:bg-[var(--red-pale)] hover:text-[color:var(--red)]"
+              className="w-full rounded-[10px] border border-[#2a2a2a] bg-[rgba(255,255,255,0.02)] px-3 py-2.5 text-[12px] font-medium text-white transition-colors hover:border-[color:var(--red)] hover:bg-[rgba(232,57,42,0.08)] hover:text-[#ffd1cb]"
               disabled={isSigningOut}
               onClick={() => void handleSignOut()}
               type="button"
@@ -81,7 +81,7 @@ export function DashboardLayout() {
             {signOutError ? (
               <div className="text-[11px] text-[#ff9a90]">{signOutError}</div>
             ) : null}
-            <div className="text-[11px] text-[#444444]">Hidden Karate Dojo © 2026</div>
+            <div className="text-[11px] text-[#575757]">Hidden Karate Dojo © 2026</div>
           </div>
         }
       />
@@ -101,7 +101,7 @@ export function DashboardPage({
 }: DashboardPageProps) {
   return (
     <div className="flex min-h-screen flex-1 flex-col overflow-hidden">
-      <div className="flex h-[58px] shrink-0 items-center justify-between border-b border-[color:var(--border)] bg-[var(--surface)] px-8">
+      <div className="ui-topbar flex h-[66px] shrink-0 items-center justify-between border-b border-[color:var(--border)] px-8">
         <h1 className="display-font text-[18px] font-extrabold text-[color:var(--ink)]">
           {title}
         </h1>
@@ -110,7 +110,7 @@ export function DashboardPage({
           {actions}
         </div>
       </div>
-      <div className="dojo-scrollbar flex-1 overflow-y-auto px-8 py-7">
+      <div className="dojo-scrollbar flex-1 overflow-y-auto px-8 py-8">
         {stats}
         {children}
       </div>
@@ -124,7 +124,7 @@ export function DashboardPlaceholderPage({
 }: DashboardPlaceholderPageProps) {
   return (
     <DashboardPage title={title}>
-      <div className="rounded-[10px] border border-[color:var(--border)] bg-[var(--surface)] px-6 py-12">
+      <div className="panel rounded-[16px] px-6 py-12">
         <div className="display-font text-[22px] font-bold text-[color:var(--ink)]">
           {title}
         </div>

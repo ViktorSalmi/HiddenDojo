@@ -32,6 +32,8 @@ export type TrainingSessionMutationInput = {
   notes: string | null;
 };
 
+export type CheckInResult = "checked-in" | "already-checked-in";
+
 export type MembersDashboardData = {
   archivedMembers: Member[];
   camps: Camp[];
@@ -399,6 +401,85 @@ export async function saveTrainingSession(input: TrainingSessionMutationInput) {
     recordId: sessionId,
     tableName: "training_sessions",
   });
+}
+
+export async function ensureTrainingSession(date: string) {
+  if (!date) {
+    throw new Error("Datum krävs.");
+  }
+
+  const { data: existing, error: existingError } = await supabase
+    .from("training_sessions")
+    .select("id")
+    .eq("date", date)
+    .maybeSingle();
+
+  if (existingError) {
+    throw existingError;
+  }
+
+  if (existing?.id) {
+    return existing.id;
+  }
+
+  const { data, error } = await supabase
+    .from("training_sessions")
+    .insert({ date, notes: null })
+    .select("id")
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  await writeAuditLog({
+    action: "create",
+    detail: { date, source: "check-in-open" },
+    recordId: data.id,
+    tableName: "training_sessions",
+  });
+
+  return data.id;
+}
+
+export async function checkInMemberForDate(
+  date: string,
+  memberId: string,
+): Promise<CheckInResult> {
+  const sessionId = await ensureTrainingSession(date);
+
+  const { data: existing, error: existingError } = await supabase
+    .from("session_attendance")
+    .select("session_id")
+    .eq("session_id", sessionId)
+    .eq("member_id", memberId)
+    .maybeSingle();
+
+  if (existingError) {
+    throw existingError;
+  }
+
+  if (existing) {
+    return "already-checked-in";
+  }
+
+  const { error } = await supabase.from("session_attendance").insert({
+    member_id: memberId,
+    session_id: sessionId,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  await writeAuditLog({
+    action: "check_in",
+    detail: { date, memberId },
+    recordId: sessionId,
+    tableName: "session_attendance",
+  });
+
+  return "checked-in";
 }
 
 export async function deleteTrainingSession(id: string) {

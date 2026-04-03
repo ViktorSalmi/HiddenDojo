@@ -1,10 +1,12 @@
 ﻿import { useEffect, useState } from "react";
 
 import {
+  checkInMemberForDate as checkInMemberForDateQuery,
   createCamp as createCampQuery,
   createMember as createMemberQuery,
   deleteCamp as deleteCampQuery,
   deleteTrainingSession as deleteTrainingSessionQuery,
+  ensureTrainingSession as ensureTrainingSessionQuery,
   fetchDashboardData,
   permanentlyDeleteMember as permanentlyDeleteMemberQuery,
   saveTrainingSession as saveTrainingSessionQuery,
@@ -12,6 +14,7 @@ import {
   toggleCampAttendance as toggleCampAttendanceQuery,
   updateCamp as updateCampQuery,
   updateMember as updateMemberQuery,
+  type CheckInResult,
   type CampMutationInput,
   type MemberMutationInput,
   type MembersDashboardData,
@@ -23,10 +26,12 @@ type UseDashboardDataOptions = {
 };
 
 export type UseDashboardDataResult = MembersDashboardData & {
+  checkInMemberForDate: (date: string, memberId: string) => Promise<CheckInResult>;
   createCamp: (input: CampMutationInput) => Promise<void>;
   createMember: (input: MemberMutationInput) => Promise<void>;
   deleteCamp: (id: string) => Promise<void>;
   deleteTrainingSession: (id: string) => Promise<void>;
+  ensureTrainingSession: (date: string) => Promise<void>;
   error: string | null;
   isLoading: boolean;
   isMutating: boolean;
@@ -108,6 +113,15 @@ export function useDashboardData(
 
   return {
     ...data,
+    async checkInMemberForDate(date, memberId) {
+      let result: CheckInResult = "already-checked-in";
+
+      await runMutation(async () => {
+        result = await checkInMemberForDateQuery(date, memberId);
+      });
+
+      return result;
+    },
     async createCamp(input) {
       await runMutation(async () => {
         await createCampQuery(input);
@@ -126,6 +140,11 @@ export function useDashboardData(
     async deleteTrainingSession(id) {
       await runMutation(async () => {
         await deleteTrainingSessionQuery(id);
+      });
+    },
+    async ensureTrainingSession(date) {
+      await runMutation(async () => {
+        await ensureTrainingSessionQuery(date);
       });
     },
     error,

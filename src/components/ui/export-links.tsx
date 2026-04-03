@@ -17,7 +17,7 @@ function ExportLink({
 }) {
   return (
     <button
-      className="rounded-full border border-[color:var(--border)] bg-[var(--surface)] px-3 py-1.5 text-[12px] font-medium text-[color:var(--ink2)] transition-colors hover:border-[#bbbbbb] hover:text-[color:var(--ink)] disabled:cursor-not-allowed disabled:opacity-60"
+      className="ui-button-pill rounded-full px-3.5 py-1.5 text-[12px] font-medium text-[color:var(--ink2)] disabled:cursor-not-allowed disabled:opacity-60"
       disabled={disabled}
       onClick={onClick}
       type="button"

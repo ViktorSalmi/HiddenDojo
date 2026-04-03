@@ -43,6 +43,7 @@ function CalendarIcon() {
 const iconMap = {
   attendance: PulseIcon,
   camps: HouseIcon,
+  checkin: CalendarIcon,
   members: UsersIcon,
   training: CalendarIcon,
 } as const;
@@ -59,19 +60,19 @@ export function Sidebar({
   footer,
 }: SidebarProps) {
   return (
-    <aside className="flex w-full shrink-0 flex-col overflow-y-auto bg-[var(--sidebar)] lg:h-screen lg:w-[240px]">
-      <div className="border-b border-[#222222] px-[22px] py-7">
-        <div className="display-font text-[22px] font-extrabold tracking-[-0.03em] text-white">
+    <aside className="flex w-full shrink-0 flex-col overflow-y-auto bg-[linear-gradient(180deg,var(--sidebar)_0%,var(--sidebar-elevated)_100%)] shadow-[inset_-1px_0_0_rgba(255,255,255,0.05)] lg:h-screen lg:w-[248px]">
+      <div className="border-b border-[#222222] px-6 py-8">
+        <div className="display-font text-[24px] font-extrabold tracking-[-0.04em] text-white">
           Hidden Karate
         </div>
-        <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-[#666666]">
+        <div className="mt-1.5 text-[10px] uppercase tracking-[0.18em] text-[#757575]">
           Tränarportalen
         </div>
       </div>
-      <div className="px-3 pt-5 text-[10px] uppercase tracking-[0.1em] text-[#555555]">
+      <div className="px-4 pt-6 text-[10px] uppercase tracking-[0.12em] text-[#6c6c6c]">
         Hantering
       </div>
-      <nav className="px-2 pb-4 pt-1">
+      <nav className="px-3 pb-5 pt-2">
         {navigationItems.map((item) => {
           const Icon = iconMap[item.key];
 
@@ -79,40 +80,52 @@ export function Sidebar({
             <NavLink
               key={item.href}
               className={({ isActive }) =>
-                `my-px flex cursor-pointer items-center gap-2.5 rounded-[7px] px-[14px] py-[9px] text-[13px] transition-colors ${
+                `my-1 flex cursor-pointer items-center gap-3 rounded-[10px] border px-4 py-2.5 text-[13px] font-medium transition-colors ${
                   isActive
-                    ? "bg-[color:rgba(192,40,26,0.09)] text-[#f26a5d]"
-                    : "text-[#8f8f8f] hover:bg-[#1e1e1e] hover:text-[#f3efe6]"
+                    ? "border-[rgba(232,57,42,0.16)] bg-[linear-gradient(180deg,rgba(232,57,42,0.16)_0%,rgba(192,40,26,0.1)_100%)] text-[#ffd6d1] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+                    : "border-transparent text-[#a7a7a7] hover:border-[rgba(255,255,255,0.05)] hover:bg-[#1d1d1d] hover:text-[#fff7ee]"
                 }`
               }
               to={item.href}
             >
-              <Icon />
+              <span className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[rgba(255,255,255,0.03)]">
+                <Icon />
+              </span>
               <span>{item.label}</span>
             </NavLink>
           );
         })}
       </nav>
-      <div className="mt-auto border-t border-[#1e1e1e] px-[14px] py-4">
-        <div className="mb-4 flex items-start justify-between">
-          <div>
-            <div className="display-font text-[20px] font-bold text-white">
-              {activeMembers}
-            </div>
-            <div className="mt-0.5 text-[10px] uppercase tracking-[0.07em] text-[#555555]">
-              Aktiva
-            </div>
+      <div className="mt-auto border-t border-[#1e1e1e] px-4 py-5">
+        <div className="mb-4 rounded-[14px] border border-[rgba(255,255,255,0.04)] bg-[rgba(255,255,255,0.02)] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+          <div className="mb-3 text-[10px] uppercase tracking-[0.14em] text-[#666666]">
+            Översikt
           </div>
-          <div className="text-right">
-            <div className="display-font text-[20px] font-bold text-white">
-              {averageAttendance}%
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="display-font text-[22px] font-bold text-white">
+                {activeMembers}
+              </div>
+              <div className="mt-0.5 text-[10px] uppercase tracking-[0.08em] text-[#707070]">
+                Aktiva
+              </div>
             </div>
-            <div className="mt-0.5 text-[10px] uppercase tracking-[0.07em] text-[#555555]">
-              Närvaro
+            <div className="text-right">
+              <div className="display-font text-[22px] font-bold text-white">
+                {averageAttendance}%
+              </div>
+              <div className="mt-0.5 text-[10px] uppercase tracking-[0.08em] text-[#707070]">
+                Närvaro
+              </div>
             </div>
           </div>
         </div>
-        {footer}
+        <div>
+          <div className="mb-2 text-[10px] uppercase tracking-[0.14em] text-[#666666]">
+            Konto
+          </div>
+          {footer}
+        </div>
       </div>
     </aside>
   );

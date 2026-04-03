@@ -43,15 +43,15 @@ export function CampForm({
         void onSubmit(readCampInput(event.currentTarget));
       }}
     >
-      <div className="display-font mb-5 text-[18px] font-extrabold text-[color:var(--ink)]">
+      <div className="display-font mb-6 text-[22px] font-extrabold text-[color:var(--ink)]">
         {camp ? "Redigera läger" : "Nytt läger / tävling"}
       </div>
       <div className="mb-3.5">
-        <label className="mb-1.5 block text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">
+        <label className="section-label mb-1.5 block">
           Namn
         </label>
         <input
-          className="w-full rounded-[7px] border border-[color:var(--border)] bg-[var(--paper)] px-3 py-2.5 text-[13px] outline-none focus:border-[color:var(--red)]"
+          className="ui-input w-full rounded-[12px] px-3.5 py-3 text-[13px] outline-none"
           defaultValue={camp?.name ?? ""}
           disabled={pending}
           name="name"
@@ -60,11 +60,11 @@ export function CampForm({
       </div>
       <div className="mb-3.5 grid gap-3 md:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">
+          <label className="section-label mb-1.5 block">
             Datum
           </label>
           <input
-            className="w-full rounded-[7px] border border-[color:var(--border)] bg-[var(--paper)] px-3 py-2.5 text-[13px] outline-none focus:border-[color:var(--red)]"
+            className="ui-input w-full rounded-[12px] px-3.5 py-3 text-[13px] outline-none"
             defaultValue={camp?.date ?? getTodayValue()}
             disabled={pending}
             name="date"
@@ -72,11 +72,11 @@ export function CampForm({
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">
+          <label className="section-label mb-1.5 block">
             Plats
           </label>
           <input
-            className="w-full rounded-[7px] border border-[color:var(--border)] bg-[var(--paper)] px-3 py-2.5 text-[13px] outline-none focus:border-[color:var(--red)]"
+            className="ui-input w-full rounded-[12px] px-3.5 py-3 text-[13px] outline-none"
             defaultValue={camp?.place ?? ""}
             disabled={pending}
             name="place"
@@ -84,15 +84,15 @@ export function CampForm({
         </div>
       </div>
       <div>
-        <label className="mb-1.5 block text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">
+        <label className="section-label mb-1.5 block">
           Deltagare
         </label>
-        <div className="max-h-40 overflow-y-auto rounded-[7px] border border-[color:var(--border)] bg-[var(--paper)] p-2.5">
+        <div className="ui-input dojo-scrollbar max-h-44 overflow-y-auto rounded-[16px] p-3">
           <div className="flex flex-wrap gap-1.5">
             {members.map((member) => (
               <label
                 key={member.id}
-                className="flex cursor-pointer items-center gap-1.5 rounded-full border border-[color:var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[12px] text-[color:var(--ink2)]"
+                className="ui-button-pill flex cursor-pointer items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] text-[color:var(--ink2)]"
               >
                 <input
                   defaultChecked={selectedIds.has(member.id)}
@@ -107,10 +107,10 @@ export function CampForm({
           </div>
         </div>
       </div>
-      <div className="mt-5 flex items-center justify-end gap-2">
+      <div className="mt-6 flex items-center justify-end gap-2.5">
         {camp && onDelete ? (
           <button
-            className="mr-auto rounded-[7px] border border-[color:var(--red)] px-3.5 py-2 text-[13px] font-medium text-[color:var(--red)] transition-colors hover:bg-[var(--red-pale)]"
+            className="ui-button-secondary ui-danger-ghost mr-auto rounded-[12px] px-3.5 py-2.5 text-[13px] font-medium text-[color:var(--red)]"
             disabled={pending}
             onClick={(event) => {
               event.preventDefault();
@@ -122,7 +122,7 @@ export function CampForm({
           </button>
         ) : null}
         <button
-          className="rounded-[7px] border border-[color:var(--border)] px-[18px] py-[9px] text-[13px] text-[color:var(--ink2)] transition-colors hover:bg-[var(--paper)]"
+          className="ui-button-secondary rounded-[12px] px-[18px] py-[10px] text-[13px] text-[color:var(--ink2)]"
           disabled={pending}
           onClick={(event) => {
             event.preventDefault();
@@ -133,7 +133,7 @@ export function CampForm({
           Avbryt
         </button>
         <button
-          className="rounded-[7px] bg-[var(--red)] px-5 py-[9px] text-[13px] font-medium text-white transition-colors hover:bg-[var(--red2)] disabled:cursor-progress disabled:opacity-60"
+          className="ui-button-primary rounded-[12px] px-5 py-[10px] text-[13px] font-medium text-white disabled:cursor-progress disabled:opacity-60"
           disabled={pending}
           type="submit"
         >

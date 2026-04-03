@@ -45,4 +45,5 @@ export const navigationItems = [
   { href: "/dashboard/camps", label: "Läger & tävlingar", key: "camps" },
   { href: "/dashboard/attendance", label: "Närvaro", key: "attendance" },
   { href: "/dashboard/training", label: "Registrera träning", key: "training" },
+  { href: "/dashboard/check-in", label: "Checka in", key: "checkin" },
 ] as const;

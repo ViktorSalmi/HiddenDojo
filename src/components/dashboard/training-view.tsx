@@ -101,28 +101,28 @@ export function TrainingView({
       }
     >
       {error ? (
-        <div className="mb-4 rounded-[10px] border border-[color:var(--red)] bg-[var(--red-pale)] px-4 py-3 text-[13px] text-[color:var(--red)]">
+        <div className="mb-4 rounded-[14px] border border-[color:var(--red)] bg-[var(--red-pale)] px-4 py-3 text-[13px] text-[color:var(--red)]">
           {error}
         </div>
       ) : null}
-      <div className="mb-[18px] flex flex-wrap items-center justify-between gap-3">
+      <div className="panel mb-[18px] flex flex-wrap items-center justify-between gap-3 rounded-[18px] px-5 py-4">
         <div className="flex flex-wrap items-center gap-2.5">
           <span className="text-[13px] text-[color:var(--ink2)]">Datum:</span>
           <input
-            className="rounded-[7px] border border-[color:var(--border)] bg-[var(--surface)] px-3 py-[7px] text-[13px] outline-none focus:border-[color:var(--red)]"
+            className="ui-input rounded-[12px] px-3 py-[9px] text-[13px] outline-none"
             onChange={(event) => setDate(event.target.value)}
             type="date"
             value={date}
           />
           <button
-            className="rounded-full border border-[color:var(--border)] px-3 py-1.5 text-[12px] text-[color:var(--ink2)] transition-colors hover:border-[#bbbbbb] hover:text-[color:var(--ink)]"
+            className="ui-button-pill rounded-full px-3 py-1.5 text-[12px] text-[color:var(--ink2)]"
             onClick={() => setSelectedIds(members.map((member) => member.id))}
             type="button"
           >
             Markera alla
           </button>
           <button
-            className="rounded-full border border-[color:var(--border)] px-3 py-1.5 text-[12px] text-[color:var(--ink2)] transition-colors hover:border-[#bbbbbb] hover:text-[color:var(--ink)]"
+            className="ui-button-pill rounded-full px-3 py-1.5 text-[12px] text-[color:var(--ink2)]"
             onClick={() => setSelectedIds([])}
             type="button"
           >
@@ -130,7 +130,7 @@ export function TrainingView({
           </button>
         </div>
         <button
-          className="rounded-[7px] bg-[var(--green)] px-[18px] py-2 text-[13px] font-medium text-white transition-colors hover:bg-[#236b42] disabled:opacity-60"
+          className="rounded-[12px] bg-[linear-gradient(180deg,#36935e_0%,var(--green)_100%)] px-[18px] py-2.5 text-[13px] font-medium text-white shadow-[0_10px_22px_rgba(45,122,79,0.18)] transition-all hover:-translate-y-[1px] hover:shadow-[0_14px_26px_rgba(45,122,79,0.22)] disabled:opacity-60"
           disabled={pending}
           onClick={() => void handleSave()}
           type="button"
@@ -148,8 +148,8 @@ export function TrainingView({
               key={member.id}
               className={`flex items-center gap-2.5 rounded-[10px] border p-[10px_14px] text-left transition-colors ${
                 active
-                  ? "border-[color:var(--green)] bg-[var(--green-pale)]"
-                  : "border-[color:var(--border)] bg-[var(--surface)] hover:border-[#bbbbbb]"
+                  ? "border-[color:var(--green)] bg-[linear-gradient(180deg,#f7fcf8_0%,var(--green-pale)_100%)] shadow-[0_10px_20px_rgba(45,122,79,0.08)]"
+                  : "panel-muted hover:border-[color:var(--border-strong)]"
               }`}
               onClick={() => {
                 setSelectedIds((current) =>
@@ -194,7 +194,7 @@ export function TrainingView({
         })}
       </div>
       <div>
-        <div className="display-font mb-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[color:var(--ink3)]">
+        <div className="display-font mb-2.5 text-[11px] font-bold uppercase tracking-[0.1em] text-[color:var(--ink3)]">
           Loggade pass
         </div>
         <div className="space-y-1.5">
@@ -211,7 +211,7 @@ export function TrainingView({
               return (
                 <div
                   key={session.id}
-                  className="flex items-center gap-3 rounded-[8px] border border-[color:var(--border)] bg-[var(--surface)] px-[14px] py-2.5"
+                  className="panel-muted flex items-center gap-3 rounded-[14px] px-[14px] py-3"
                 >
                   <div className="min-w-[88px] text-[12px] font-medium text-[color:var(--ink)]">
                     {formatDateLabel(session.date)}
@@ -228,12 +228,12 @@ export function TrainingView({
                   </div>
                   <div className="text-[11px] text-[color:var(--ink3)]">{names.length} elever</div>
                   <button
-                    className="text-[18px] leading-none text-[#cccccc] transition-colors hover:text-[color:var(--red)]"
+                    className="flex h-8 w-8 items-center justify-center rounded-full text-[18px] leading-none text-[#cccccc] transition-colors hover:bg-[var(--red-pale)] hover:text-[color:var(--red)]"
                     disabled={pending}
                     onClick={() => setDeleteSessionId(session.id)}
                     type="button"
                   >
-                    Ã—
+                    ×
                   </button>
                 </div>
               );
@@ -254,7 +254,7 @@ export function TrainingView({
         </p>
         <div className="flex justify-end gap-2">
           <button
-            className="rounded-[7px] border border-[color:var(--border)] px-[18px] py-[9px] text-[13px] text-[color:var(--ink2)] transition-colors hover:bg-[var(--paper)]"
+            className="ui-button-secondary rounded-[12px] px-[18px] py-[10px] text-[13px] text-[color:var(--ink2)]"
             disabled={pending}
             onClick={() => setDeleteSessionId(null)}
             type="button"
@@ -262,7 +262,7 @@ export function TrainingView({
             Avbryt
           </button>
           <button
-            className="rounded-[7px] bg-[var(--red)] px-5 py-[9px] text-[13px] font-medium text-white transition-colors hover:bg-[var(--red2)] disabled:cursor-progress disabled:opacity-60"
+            className="ui-button-primary rounded-[12px] px-5 py-[10px] text-[13px] font-medium text-white disabled:cursor-progress disabled:opacity-60"
             disabled={pending}
             onClick={() => void handleDelete()}
             type="button"

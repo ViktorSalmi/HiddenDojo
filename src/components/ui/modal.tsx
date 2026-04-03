@@ -34,7 +34,7 @@ export function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-[300] flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-[300] flex items-center justify-center bg-[rgba(14,14,14,0.48)] p-4 backdrop-blur-[3px]"
       onClick={(event) => {
         if (event.target === event.currentTarget) {
           onClose();
@@ -42,7 +42,7 @@ export function Modal({
       }}
     >
       <div
-        className={`w-full rounded-[14px] bg-[var(--surface)] p-7 shadow-[0_16px_60px_rgba(0,0,0,0.2)] ${widthClassName}`}
+        className={`panel w-full rounded-[22px] p-7 shadow-[0_22px_80px_rgba(0,0,0,0.18)] ${widthClassName}`}
       >
         {children}
       </div>

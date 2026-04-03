@@ -39,15 +39,15 @@ export function MemberForm({
         void onSubmit(readMemberInput(event.currentTarget));
       }}
     >
-      <div className="display-font mb-5 text-[18px] font-extrabold text-[color:var(--ink)]">
+      <div className="display-font mb-6 text-[22px] font-extrabold text-[color:var(--ink)]">
         {member ? `Redigera ${member.name.split(" ")[0]}` : "Ny medlem"}
       </div>
       <div className="mb-3.5">
-        <label className="mb-1.5 block text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">
+        <label className="section-label mb-1.5 block">
           Namn
         </label>
         <input
-          className="w-full rounded-[7px] border border-[color:var(--border)] bg-[var(--paper)] px-3 py-2.5 text-[13px] outline-none focus:border-[color:var(--red)]"
+          className="ui-input w-full rounded-[12px] px-3.5 py-3 text-[13px] outline-none"
           defaultValue={member?.name ?? ""}
           disabled={pending}
           name="name"
@@ -57,11 +57,11 @@ export function MemberForm({
       </div>
       <div className="mb-3.5 grid gap-3 md:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">
+          <label className="section-label mb-1.5 block">
             Ålder
           </label>
           <input
-            className="w-full rounded-[7px] border border-[color:var(--border)] bg-[var(--paper)] px-3 py-2.5 text-[13px] outline-none focus:border-[color:var(--red)]"
+            className="ui-input w-full rounded-[12px] px-3.5 py-3 text-[13px] outline-none"
             defaultValue={member?.age ?? 12}
             disabled={pending}
             max={99}
@@ -71,11 +71,11 @@ export function MemberForm({
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">
+          <label className="section-label mb-1.5 block">
             Kön
           </label>
           <select
-            className="w-full rounded-[7px] border border-[color:var(--border)] bg-[var(--paper)] px-3 py-2.5 text-[13px] outline-none focus:border-[color:var(--red)]"
+            className="ui-input w-full rounded-[12px] px-3.5 py-3 text-[13px] outline-none"
             defaultValue={member?.gender ?? "M"}
             disabled={pending}
             name="gender"
@@ -88,11 +88,11 @@ export function MemberForm({
       </div>
       <div className="grid gap-3 md:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">
+          <label className="section-label mb-1.5 block">
             Bälte
           </label>
           <select
-            className="w-full rounded-[7px] border border-[color:var(--border)] bg-[var(--paper)] px-3 py-2.5 text-[13px] outline-none focus:border-[color:var(--red)]"
+            className="ui-input w-full rounded-[12px] px-3.5 py-3 text-[13px] outline-none"
             defaultValue={member?.belt ?? "vitt"}
             disabled={pending}
             name="belt"
@@ -105,11 +105,11 @@ export function MemberForm({
           </select>
         </div>
         <div>
-          <label className="mb-1.5 block text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">
+          <label className="section-label mb-1.5 block">
             Sedan
           </label>
           <input
-            className="w-full rounded-[7px] border border-[color:var(--border)] bg-[var(--paper)] px-3 py-2.5 text-[13px] outline-none focus:border-[color:var(--red)]"
+            className="ui-input w-full rounded-[12px] px-3.5 py-3 text-[13px] outline-none"
             defaultValue={member?.joined_date ?? getTodayValue()}
             disabled={pending}
             name="joined_date"
@@ -117,10 +117,10 @@ export function MemberForm({
           />
         </div>
       </div>
-      <div className="mt-5 flex items-center justify-end gap-2">
+      <div className="mt-6 flex items-center justify-end gap-2.5">
         {member && onDelete ? (
           <button
-            className="mr-auto rounded-[7px] border border-[color:var(--red)] px-3.5 py-2 text-[13px] font-medium text-[color:var(--red)] transition-colors hover:bg-[var(--red-pale)]"
+            className="ui-button-secondary ui-danger-ghost mr-auto rounded-[12px] px-3.5 py-2.5 text-[13px] font-medium text-[color:var(--red)]"
             disabled={pending}
             onClick={(event) => {
               event.preventDefault();
@@ -132,7 +132,7 @@ export function MemberForm({
           </button>
         ) : null}
         <button
-          className="rounded-[7px] border border-[color:var(--border)] px-[18px] py-[9px] text-[13px] text-[color:var(--ink2)] transition-colors hover:bg-[var(--paper)]"
+          className="ui-button-secondary rounded-[12px] px-[18px] py-[10px] text-[13px] text-[color:var(--ink2)]"
           disabled={pending}
           onClick={(event) => {
             event.preventDefault();
@@ -143,7 +143,7 @@ export function MemberForm({
           Avbryt
         </button>
         <button
-          className="rounded-[7px] bg-[var(--red)] px-5 py-[9px] text-[13px] font-medium text-white transition-colors hover:bg-[var(--red2)] disabled:cursor-progress disabled:opacity-60"
+          className="ui-button-primary rounded-[12px] px-5 py-[10px] text-[13px] font-medium text-white disabled:cursor-progress disabled:opacity-60"
           disabled={pending}
           type="submit"
         >

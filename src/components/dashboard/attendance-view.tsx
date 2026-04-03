@@ -137,16 +137,16 @@ export function AttendanceView({
       />
       <div className="mb-4">
         <button
-          className="rounded-full border border-[color:var(--border)] bg-[var(--surface)] px-3 py-1.5 text-[12px] font-medium text-[color:var(--ink2)] transition-colors hover:border-[#bbbbbb] hover:text-[color:var(--ink)]"
+          className="ui-button-pill rounded-full px-3 py-1.5 text-[12px] font-medium text-[color:var(--ink2)]"
           onClick={exportMembersCsv}
           type="button"
         >
           Exportera medlemslista CSV
         </button>
       </div>
-      <div className="dojo-scrollbar overflow-x-auto rounded-[10px] border border-[color:var(--border)] bg-[var(--surface)]">
+      <div className="table-shell dojo-scrollbar overflow-x-auto rounded-[18px]">
         <table className="min-w-[900px] w-full table-fixed border-collapse">
-          <thead className="bg-[var(--paper)]">
+          <thead className="table-head">
             <tr className="border-b border-[color:var(--border)]">
               <th className="w-[52px] px-5 py-3 text-left text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]" />
               <th className="px-4 py-3 text-left text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">Namn</th>
@@ -165,7 +165,7 @@ export function AttendanceView({
               return (
                 <tr
                   key={member.id}
-                  className="border-b border-[color:var(--border)] last:border-b-0 hover:bg-[#faf9f7]"
+                  className="table-row border-b border-[color:var(--border)] last:border-b-0"
                 >
                   <td className="px-5 py-3">
                     <div
@@ -184,9 +184,9 @@ export function AttendanceView({
                     {summary.attendedSessions} / {summary.totalSessions}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="h-[6px] w-[140px] overflow-hidden rounded-[3px] bg-[#eeeeee]">
+                    <div className="h-[8px] w-[140px] overflow-hidden rounded-full bg-[#ece7df]">
                       <div
-                        className="h-[6px] rounded-[3px]"
+                        className="h-[8px] rounded-full"
                         style={{ background: color, width: `${summary.percent}%` }}
                       />
                     </div>

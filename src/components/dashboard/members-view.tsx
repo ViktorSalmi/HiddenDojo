@@ -187,7 +187,7 @@ export function MembersView({
       search={
         <div className="relative">
           <input
-            className="w-[220px] rounded-[7px] border border-[color:var(--border)] bg-[var(--paper)] px-3 py-2 pl-8 text-[13px] outline-none transition-colors focus:border-[color:var(--red)]"
+            className="ui-input w-[240px] rounded-[12px] px-3 py-2.5 pl-8 text-[13px] outline-none"
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Sök namn..."
             value={query}
@@ -203,7 +203,7 @@ export function MembersView({
       }
       actions={
         <button
-          className="rounded-[7px] bg-[var(--red)] px-[18px] py-2 text-[13px] font-medium text-white transition-colors hover:bg-[var(--red2)] disabled:opacity-60"
+          className="ui-button-primary rounded-[12px] px-[18px] py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
           disabled={pending}
           onClick={() => {
             setEditingMember(null);
@@ -228,7 +228,7 @@ export function MembersView({
           <span>{error}</span>
           {onRefresh ? (
             <button
-              className="rounded-[7px] border border-[color:var(--red)] px-3 py-1.5 text-[12px] font-medium"
+              className="ui-button-secondary rounded-[10px] border-[color:var(--red)] px-3 py-1.5 text-[12px] font-medium text-[color:var(--red)]"
               disabled={pending}
               onClick={() => void onRefresh()}
               type="button"
@@ -247,10 +247,10 @@ export function MembersView({
           (belt) => (
             <button
               key={belt}
-              className={`rounded-full border px-3.5 py-1.5 text-[12px] font-medium transition-colors ${
+              className={`rounded-full px-3.5 py-1.5 text-[12px] font-medium transition-colors ${
                 beltFilter === belt
-                  ? "border-[color:var(--ink)] bg-[var(--ink)] text-white"
-                  : "border-[color:var(--border)] bg-[var(--surface)] text-[color:var(--ink2)] hover:border-[#bbbbbb] hover:text-[color:var(--ink)]"
+                  ? "border border-[color:var(--ink)] bg-[var(--ink)] text-white shadow-[0_10px_24px_rgba(14,14,14,0.12)]"
+                  : "ui-button-pill text-[color:var(--ink2)] hover:text-[color:var(--ink)]"
               }`}
               onClick={() => setBeltFilter(belt)}
               type="button"
@@ -265,9 +265,9 @@ export function MembersView({
           Väntar på data från Supabase.
         </EmptyState>
       ) : (
-        <div className="dojo-scrollbar overflow-x-auto rounded-[10px] border border-[color:var(--border)] bg-[var(--surface)]">
+        <div className="table-shell dojo-scrollbar overflow-x-auto rounded-[18px]">
           <table className="min-w-[920px] w-full table-fixed border-collapse">
-            <thead className="bg-[var(--paper)]">
+            <thead className="table-head">
               <tr className="border-b border-[color:var(--border)]">
                 <th className="w-[52px] px-5 py-3 text-left text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]" />
                 <th className="px-4 py-3 text-left text-[11px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">
@@ -309,7 +309,7 @@ export function MembersView({
                   return (
                     <tr
                       key={member.id}
-                      className="border-b border-[color:var(--border)] last:border-b-0 hover:bg-[#faf9f7]"
+                      className="table-row border-b border-[color:var(--border)] last:border-b-0"
                     >
                       <td className="px-5 py-3">
                         <div
@@ -369,7 +369,7 @@ export function MembersView({
                       <td className="px-5 py-3 text-right">
                         <div className="flex justify-end gap-1 whitespace-nowrap">
                           <button
-                            className="inline-flex items-center whitespace-nowrap rounded-md border border-[color:var(--border)] px-2 py-1 text-[12px] text-[color:var(--ink3)] transition-colors hover:border-[color:var(--green)] hover:bg-[var(--green-pale)] hover:text-[color:var(--green)]"
+                            className="ui-button-secondary ui-success-ghost inline-flex items-center whitespace-nowrap rounded-[10px] px-2.5 py-1.5 text-[12px] text-[color:var(--ink3)]"
                             disabled={pending}
                             onClick={() => {
                               setIsCreating(false);
@@ -380,7 +380,7 @@ export function MembersView({
                             Redigera
                           </button>
                           <button
-                            className="inline-flex items-center whitespace-nowrap rounded-md border border-[color:var(--border)] px-2 py-1 text-[12px] text-[color:var(--ink3)] transition-colors hover:border-[color:var(--red)] hover:bg-[var(--red-pale)] hover:text-[color:var(--red)]"
+                            className="ui-button-secondary ui-danger-ghost inline-flex items-center whitespace-nowrap rounded-[10px] px-2.5 py-1.5 text-[12px] text-[color:var(--ink3)]"
                             disabled={pending}
                             onClick={() =>
                               setDeleteTarget({ id: member.id, mode: "soft" })
@@ -406,7 +406,7 @@ export function MembersView({
             {archivedMembers.map((member) => (
               <div
                 key={member.id}
-                className="flex items-center justify-between rounded-[10px] border border-[color:var(--border)] bg-[var(--surface)] px-4 py-3"
+                className="panel-muted flex items-center justify-between rounded-[16px] px-4 py-3"
               >
                 <div>
                   <div className="text-[13px] font-medium">{member.name}</div>
@@ -415,7 +415,7 @@ export function MembersView({
                   </div>
                 </div>
                 <button
-                  className="rounded-[7px] border border-[color:var(--red)] px-3 py-2 text-[12px] font-medium text-[color:var(--red)] transition-colors hover:bg-[var(--red-pale)]"
+                  className="ui-button-secondary ui-danger-ghost rounded-[12px] px-3.5 py-2 text-[12px] font-medium text-[color:var(--red)]"
                   disabled={pending}
                   onClick={() => setDeleteTarget({ id: member.id, mode: "hard" })}
                   type="button"
@@ -465,7 +465,7 @@ export function MembersView({
         </p>
         <div className="flex justify-end gap-2">
           <button
-            className="rounded-[7px] border border-[color:var(--border)] px-[18px] py-[9px] text-[13px] text-[color:var(--ink2)] transition-colors hover:bg-[var(--paper)]"
+            className="ui-button-secondary rounded-[12px] px-[18px] py-[10px] text-[13px] text-[color:var(--ink2)]"
             disabled={pending}
             onClick={() => setDeleteTarget(null)}
             type="button"
@@ -473,7 +473,7 @@ export function MembersView({
             Avbryt
           </button>
           <button
-            className="rounded-[7px] bg-[var(--red)] px-5 py-[9px] text-[13px] font-medium text-white transition-colors hover:bg-[var(--red2)] disabled:cursor-progress disabled:opacity-60"
+            className="ui-button-primary rounded-[12px] px-5 py-[10px] text-[13px] font-medium text-white disabled:cursor-progress disabled:opacity-60"
             disabled={pending}
             onClick={() => void handleDelete()}
             type="button"

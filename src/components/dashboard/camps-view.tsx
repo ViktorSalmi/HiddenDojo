@@ -90,7 +90,7 @@ export function CampsView({
       title="Läger & tävlingar"
       actions={
         <button
-          className="rounded-[7px] bg-[var(--red)] px-[18px] py-2 text-[13px] font-medium text-white transition-colors hover:bg-[var(--red2)] disabled:opacity-60"
+          className="ui-button-primary rounded-[12px] px-[18px] py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
           disabled={pending}
           onClick={() => {
             setEditingCamp(null);
@@ -111,20 +111,20 @@ export function CampsView({
       }
     >
       {error ? (
-        <div className="mb-4 rounded-[10px] border border-[color:var(--red)] bg-[var(--red-pale)] px-4 py-3 text-[13px] text-[color:var(--red)]">
+        <div className="mb-4 rounded-[14px] border border-[color:var(--red)] bg-[var(--red-pale)] px-4 py-3 text-[13px] text-[color:var(--red)]">
           {error}
         </div>
       ) : null}
       <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
         {camps.length === 0 ? (
-          <div className="rounded-[10px] border border-[color:var(--border)] bg-[var(--surface)] px-6 py-12 text-center text-[13px] text-[color:var(--ink3)]">
+          <div className="panel rounded-[18px] px-6 py-12 text-center text-[13px] text-[color:var(--ink3)]">
             Inga läger registrerade ännu
           </div>
         ) : (
           camps.map((camp) => (
             <div
               key={camp.id}
-              className="rounded-[10px] border border-[color:var(--border)] bg-[var(--surface)] p-5"
+              className="panel rounded-[18px] p-5"
             >
               <div className="mb-3.5 flex items-start justify-between gap-3">
                 <div>
@@ -136,11 +136,11 @@ export function CampsView({
                     {camp.place ? ` • ${camp.place}` : ""}
                   </div>
                 </div>
-                <div className="rounded-full bg-[var(--red-pale)] px-3 py-1 text-[12px] font-medium text-[color:var(--red)]">
+                <div className="rounded-full bg-[var(--red-pale)] px-3 py-1 text-[12px] font-medium text-[color:var(--red)] shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]">
                   {camp.attendee_ids.length} / {members.length}
                 </div>
               </div>
-              <div className="mb-2 text-[10px] uppercase tracking-[0.06em] text-[color:var(--ink3)]">
+              <div className="mb-2 section-label">
                 Klicka en elev för att toggla närvaro
               </div>
               <div className="flex flex-wrap gap-1.5">
@@ -152,8 +152,8 @@ export function CampsView({
                       key={member.id}
                       className={`rounded-full px-2.5 py-1 text-[12px] font-medium transition-all ${
                         active
-                          ? "bg-[var(--green-pale)] text-[color:var(--green)]"
-                          : "bg-[#f2f2f2] text-[#bbbbbb]"
+                          ? "border border-[rgba(45,122,79,0.12)] bg-[var(--green-pale)] text-[color:var(--green)] shadow-[inset_0_1px_0_rgba(255,255,255,0.45)]"
+                          : "ui-button-pill text-[#8d877e]"
                       }`}
                       disabled={pending}
                       onClick={() => {
@@ -174,7 +174,7 @@ export function CampsView({
               </div>
               <div className="mt-4 flex justify-end gap-2">
                 <button
-                  className="rounded-md border border-[color:var(--border)] px-2.5 py-1.5 text-[12px] text-[color:var(--ink3)] transition-colors hover:border-[color:var(--green)] hover:bg-[var(--green-pale)] hover:text-[color:var(--green)]"
+                  className="ui-button-secondary ui-success-ghost rounded-[10px] px-2.5 py-1.5 text-[12px] text-[color:var(--ink3)]"
                   disabled={pending}
                   onClick={() => {
                     setIsCreating(false);
@@ -185,7 +185,7 @@ export function CampsView({
                   Redigera
                 </button>
                 <button
-                  className="rounded-md border border-[color:var(--border)] px-2.5 py-1.5 text-[12px] text-[color:var(--ink3)] transition-colors hover:border-[color:var(--red)] hover:bg-[var(--red-pale)] hover:text-[color:var(--red)]"
+                  className="ui-button-secondary ui-danger-ghost rounded-[10px] px-2.5 py-1.5 text-[12px] text-[color:var(--ink3)]"
                   disabled={pending}
                   onClick={() => setDeleteCampId(camp.id)}
                   type="button"
@@ -234,7 +234,7 @@ export function CampsView({
         </p>
         <div className="flex justify-end gap-2">
           <button
-            className="rounded-[7px] border border-[color:var(--border)] px-[18px] py-[9px] text-[13px] text-[color:var(--ink2)] transition-colors hover:bg-[var(--paper)]"
+            className="ui-button-secondary rounded-[12px] px-[18px] py-[10px] text-[13px] text-[color:var(--ink2)]"
             disabled={pending}
             onClick={() => setDeleteCampId(null)}
             type="button"
@@ -242,7 +242,7 @@ export function CampsView({
             Avbryt
           </button>
           <button
-            className="rounded-[7px] bg-[var(--red)] px-5 py-[9px] text-[13px] font-medium text-white transition-colors hover:bg-[var(--red2)] disabled:cursor-progress disabled:opacity-60"
+            className="ui-button-primary rounded-[12px] px-5 py-[10px] text-[13px] font-medium text-white disabled:cursor-progress disabled:opacity-60"
             disabled={pending}
             onClick={() => void handleDelete()}
             type="button"
