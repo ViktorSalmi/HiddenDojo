@@ -26,13 +26,13 @@ export function downloadBlob(filename: string, blob: Blob) {
 }
 
 export function downloadCsv(filename: string, csvText: string) {
-  downloadBlob(filename, new Blob([csvText], { type: "text/csv;charset=utf-8" }));
+  downloadBlob(filename, new Blob([`\uFEFF${csvText}`], { type: "text/csv;charset=utf-8" }));
 }
 
 export function sanitizeCsvCell(value: string | number) {
   const stringValue = String(value);
 
-  if (!/[",\n]/.test(stringValue)) {
+  if (!/[;"\n]/.test(stringValue)) {
     return stringValue;
   }
 
@@ -40,7 +40,7 @@ export function sanitizeCsvCell(value: string | number) {
 }
 
 function buildCsvLine(values: Array<string | number>) {
-  return values.map((value) => sanitizeCsvCell(value)).join(",");
+  return values.map((value) => sanitizeCsvCell(value)).join(";");
 }
 
 export function buildMembersCsv(rows: MemberRow[]) {

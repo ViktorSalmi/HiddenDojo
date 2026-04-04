@@ -22,7 +22,7 @@ import {
   getBeltLabel,
   getInitials,
 } from "@/lib/dojo/format";
-import { downloadSimplePdfReport } from "@/lib/dojo/pdf";
+import { downloadBrandedPdfReport } from "@/lib/dojo/pdf-report";
 import type { Camp, Member, TrainingSession } from "@/types";
 
 type AttendanceViewProps = {
@@ -30,6 +30,11 @@ type AttendanceViewProps = {
   members: Member[];
   sessions: TrainingSession[];
 };
+
+function getDatedFilename(prefix: string) {
+  const date = new Date().toISOString().slice(0, 10);
+  return `${prefix}-${date}`;
+}
 
 function buildAttendanceRows(
   members: Member[],
@@ -67,14 +72,21 @@ export function AttendanceView({
 
   function exportAttendanceCsv() {
     downloadCsv(
-      "narvaro.csv",
+      `${getDatedFilename("narvaro")}.csv`,
       buildAttendanceCsv(buildAttendanceExportRows(members, camps, sessions)),
     );
   }
 
   async function exportAttendancePdf() {
-    await downloadSimplePdfReport("narvaro.pdf", {
-      columns: ["Namn", "Bälte", "Läger", "Träningar", "Närvaro"],
+    await downloadBrandedPdfReport(`${getDatedFilename("narvaro")}.pdf`, {
+      columns: [
+        { header: "Namn", width: 2.1 },
+        { header: "Bälte", width: 1.2 },
+        { header: "Läger", width: 1.0, align: "center" },
+        { header: "Träningar", width: 1.1, align: "center" },
+        { header: "Närvaro", width: 1.0, align: "right" },
+      ],
+      footerNote: "Närvarorapport för Hidden Karate",
       rows: rows.map(({ beltLabel, member, summary }) => [
         member.name,
         beltLabel,
@@ -82,7 +94,33 @@ export function AttendanceView({
         `${summary.attendedSessions} / ${summary.totalSessions}`,
         `${summary.percent}%`,
       ]),
-      subtitle: `${members.length} aktiva medlemmar`,
+      subtitle: `${members.length} aktiva medlemmar med samlad närvarostatistik`,
+      summaryCards: [
+        {
+          label: "Aktiva medlemmar",
+          helper: "Underlag för dagens rapport",
+          tone: "blue",
+          value: String(members.length),
+        },
+        {
+          label: "Snittnärvaro",
+          helper: "Över alla loggade pass",
+          tone: "green",
+          value: `${stats.averageAttendancePercent}%`,
+        },
+        {
+          label: "Läger loggade",
+          helper: "Registrerade lägerdagar",
+          tone: "red",
+          value: String(camps.length),
+        },
+        {
+          label: "Träningar loggade",
+          helper: "Registrerade träningspass",
+          tone: "gold",
+          value: String(sessions.length),
+        },
+      ],
       title: "Närvaro",
     });
   }

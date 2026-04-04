@@ -24,7 +24,7 @@ import {
   getGenderLabel,
   getInitials,
 } from "@/lib/dojo/format";
-import { downloadSimplePdfReport } from "@/lib/dojo/pdf";
+import { downloadBrandedPdfReport } from "@/lib/dojo/pdf-report";
 import type { MemberMutationInput } from "@/lib/supabase/queries";
 import type { Camp, Member, TrainingSession } from "@/types";
 
@@ -50,6 +50,11 @@ type DeleteTarget = {
   id: string;
   mode: "hard" | "soft";
 };
+
+function getDatedFilename(prefix: string) {
+  const date = new Date().toISOString().slice(0, 10);
+  return `${prefix}-${date}`;
+}
 
 function EmptyState({
   children,
@@ -116,14 +121,24 @@ export function MembersView({
   }
 
   function handleExportCsv() {
-    downloadCsv("medlemmar.csv", buildMembersCsv(buildExportRows()));
+    downloadCsv(
+      `${getDatedFilename("medlemmar")}.csv`,
+      buildMembersCsv(buildExportRows()),
+    );
   }
 
   async function handleExportPdf() {
     const rows = buildExportRows();
 
-    await downloadSimplePdfReport("medlemmar.pdf", {
-      columns: ["Namn", "Kön", "Ålder", "Bälte", "Närvaro"],
+    await downloadBrandedPdfReport(`${getDatedFilename("medlemmar")}.pdf`, {
+      columns: [
+        { header: "Namn", width: 2.2 },
+        { header: "Kön", width: 1.1 },
+        { header: "Ålder", width: 0.8, align: "right" },
+        { header: "Bälte", width: 1.3 },
+        { header: "Närvaro", width: 1.0, align: "right" },
+      ],
+      footerNote: "Hidden Karate • Medlemslista",
       rows: rows.map((row) => [
         row.name,
         row.genderLabel,
@@ -132,7 +147,7 @@ export function MembersView({
         `${row.attendancePercent}%`,
       ]),
       subtitle: `${rows.length} aktiva medlemmar`,
-      title: "Medlemmar",
+      title: "Medlemslista",
     });
   }
 
