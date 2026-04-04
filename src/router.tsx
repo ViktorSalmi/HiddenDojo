@@ -2,9 +2,9 @@
 
 import { LoginPage } from "@/components/auth/login-form";
 import { AttendanceDashboardRoute } from "@/components/dashboard/attendance-view";
-import { CalendarDashboardRoute } from "@/components/dashboard/calendar-view";
+import { CalendarDashboardRoute } from "@/components/dashboard/calendar-nav-view";
 import { CampsDashboardRoute } from "@/components/dashboard/camps-view";
-import { CheckInDashboardRoute } from "@/components/dashboard/check-in-view";
+import { CheckInDashboardRoute } from "@/components/dashboard/check-in-station-view";
 import { MembersDashboardRoute } from "@/components/dashboard/members-view";
 import { TrainingDashboardRoute } from "@/components/dashboard/training-view";
 import { DashboardLayout, DashboardPlaceholderPage } from "@/components/layout/dashboard-page";

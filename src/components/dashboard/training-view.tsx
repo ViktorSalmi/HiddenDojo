@@ -19,25 +19,25 @@ const templatePresets = [
     groupLabel: "Blandad grupp",
     label: "Teknikpass",
     notes:
-      "Uppvarmning:\n- Latt fotarbete och rorlighet\n\nTeknikblock:\n- Kihon i framatrorrelse\n- Fokus pa gard och avstand\n\nOvningsblock:\n- Parovningar med kontrollerad kontakt\n\nAvslut:\n- Nedvarvning och kort reflektion",
+      "Uppvärmning:\n- Lätt fotarbete och rörlighet\n\nTeknikblock:\n- Kihon i framåtrörelse\n- Fokus på gard och avstånd\n\nÖvningsblock:\n- Parövningar med kontrollerad kontakt\n\nAvslut:\n- Nedvarvning och kort reflektion",
     title: "Kihon och fotarbete",
   },
   {
-    equipment: "Inget sarskilt",
+    equipment: "Inget särskilt",
     focus: "Kata, timing och precision",
     groupLabel: "Katafokus",
     label: "Katapass",
     notes:
-      "Uppvarmning:\n- Koordination och positioner\n\nTeknikblock:\n- Grundpositioner och overgangen mellan dem\n\nKataarbete:\n- Repetition i delar\n- En hel genomgang med fokus pa timing\n\nAvslut:\n- Individuell feedback",
+      "Uppvärmning:\n- Koordination och positioner\n\nTeknikblock:\n- Grundpositioner och övergången mellan dem\n\nKataarbete:\n- Repetition i delar\n- En hel genomgång med fokus på timing\n\nAvslut:\n- Individuell feedback",
     title: "Kata med detaljer",
   },
   {
     equipment: "Handskar, benskydd",
-    focus: "Distanslasning och beslutsfattande",
-    groupLabel: "Vuxna / fortsattning",
+    focus: "Distansläsning och beslutsfattande",
+    groupLabel: "Vuxna / fortsättning",
     label: "Sparringpass",
     notes:
-      "Uppvarmning:\n- Puls, fotarbete, reaktionsstarter\n\nTeknikblock:\n- Ingangar och utgangar ur avstand\n\nSparring:\n- Latt sparring i korta intervaller\n- Fokus pa kontroll och tajming\n\nAvslut:\n- Nedvarvning och avstamning",
+      "Uppvärmning:\n- Puls, fotarbete, reaktionsstarter\n\nTeknikblock:\n- Ingångar och utgångar ur avstånd\n\nSparring:\n- Lätt sparring i korta intervaller\n- Fokus på kontroll och tajming\n\nAvslut:\n- Nedvarvning och avstämning",
     title: "Sparring och distans",
   },
 ] as const;
@@ -450,8 +450,8 @@ export function TrainingView({
             {isSaving
               ? "Sparar..."
               : currentSession
-                ? "Spara uppdateringar"
-                : "Spara passplanering"}
+                ? "Spara pass"
+                : "Spara pass"}
           </button>
         </div>
       </div>

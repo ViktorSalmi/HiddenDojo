@@ -1,5 +1,5 @@
 ﻿import { useState } from "react";
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { Sidebar } from "@/components/layout/sidebar";
 import { getTodayValue } from "@/lib/dojo/format";
@@ -26,6 +26,7 @@ type DashboardPlaceholderPageProps = {
 };
 
 export function DashboardLayout() {
+  const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, session } = useSession();
   const dashboard = useDashboardData({ enabled: isAuthenticated });
@@ -40,6 +41,9 @@ export function DashboardLayout() {
     dashboard.sessions
       .filter((session) => session.date >= today)
       .sort((left, right) => left.date.localeCompare(right.date))[0] ?? null;
+  const hideSidebar =
+    location.pathname === "/dashboard/check-in" &&
+    new URLSearchParams(location.search).get("kiosk") === "1";
 
   if (isLoading) {
     return <main className="shell">Laddar dashboard...</main>;
@@ -72,29 +76,31 @@ export function DashboardLayout() {
 
   return (
     <div className="app-shell flex h-screen flex-col overflow-hidden bg-[var(--paper)] lg:flex-row">
-      <Sidebar
-        footer={
-          <div className="space-y-3">
-            <button
-              className="w-full rounded-[10px] border border-[#2a2a2a] bg-[rgba(255,255,255,0.02)] px-3 py-2.5 text-[12px] font-medium text-white transition-colors hover:border-[color:var(--red)] hover:bg-[rgba(232,57,42,0.08)] hover:text-[#ffd1cb]"
-              disabled={isSigningOut}
-              onClick={() => void handleSignOut()}
-              type="button"
-            >
-              {isSigningOut ? "Loggar ut..." : "Logga ut"}
-            </button>
-            {session?.user.email ? (
-              <div className="text-[11px] text-[#666666]">{session.user.email}</div>
-            ) : null}
-            {signOutError ? (
-              <div className="text-[11px] text-[#ff9a90]">{signOutError}</div>
-            ) : null}
-            <div className="text-[11px] text-[#575757]">Hidden Karate Dojo © 2026</div>
-          </div>
-        }
-        nextCamp={nextCamp}
-        nextSession={nextSession}
-      />
+      {hideSidebar ? null : (
+        <Sidebar
+          footer={
+            <div className="space-y-3">
+              <button
+                className="w-full rounded-[10px] border border-[#2a2a2a] bg-[rgba(255,255,255,0.02)] px-3 py-2.5 text-[12px] font-medium text-white transition-colors hover:border-[color:var(--red)] hover:bg-[rgba(232,57,42,0.08)] hover:text-[#ffd1cb]"
+                disabled={isSigningOut}
+                onClick={() => void handleSignOut()}
+                type="button"
+              >
+                {isSigningOut ? "Loggar ut..." : "Logga ut"}
+              </button>
+              {session?.user.email ? (
+                <div className="text-[11px] text-[#666666]">{session.user.email}</div>
+              ) : null}
+              {signOutError ? (
+                <div className="text-[11px] text-[#ff9a90]">{signOutError}</div>
+              ) : null}
+              <div className="text-[11px] text-[#575757]">Hidden Karate Dojo © 2026</div>
+            </div>
+          }
+          nextCamp={nextCamp}
+          nextSession={nextSession}
+        />
+      )}
       <div className="min-w-0 flex-1 overflow-hidden">
         <Outlet context={dashboard} />
       </div>

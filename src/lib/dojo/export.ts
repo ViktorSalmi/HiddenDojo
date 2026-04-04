@@ -47,11 +47,11 @@ export function buildMembersCsv(rows: MemberRow[]) {
   return [
     buildCsvLine([
       "Namn",
-      "Kon",
-      "Age",
-      "Balte",
+      "Kön",
+      "Ålder",
+      "Bälte",
       "Startdatum",
-      "Narvaro %",
+      "Närvaro %",
       "Status",
     ]),
     ...rows.map((row) =>
@@ -70,7 +70,7 @@ export function buildMembersCsv(rows: MemberRow[]) {
 
 export function buildAttendanceCsv(rows: AttendanceRow[]) {
   return [
-    buildCsvLine(["Namn", "Balte", "Lager", "Traningar", "Narvaro %"]),
+    buildCsvLine(["Namn", "Bälte", "Läger", "Träningar", "Närvaro %"]),
     ...rows.map((row) =>
       buildCsvLine([
         row.name,
